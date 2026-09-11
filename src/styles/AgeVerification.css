@@ -1,0 +1,202 @@
+.age-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 20px;
+
+  background: rgba(20, 15, 12, 0.94);
+}
+
+.age-modal {
+  width: min(100%, 520px);
+
+  padding: 60px 50px;
+
+  text-align: center;
+
+  background: #f5f0e8;
+
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+}
+
+.age-logo {
+  margin-bottom: 30px;
+
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: 6px;
+
+  color: #4a1518;
+}
+
+.age-label {
+  margin-bottom: 15px;
+
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+
+  color: #777;
+}
+
+.age-modal h1 {
+  margin-bottom: 18px;
+
+  font-size: clamp(30px, 5vw, 44px);
+  font-weight: 400;
+  line-height: 1.15;
+
+  color: #241a17;
+}
+
+.age-description {
+  max-width: 400px;
+
+  margin: 0 auto 30px;
+
+  font-size: 15px;
+  line-height: 1.7;
+
+  color: #625955;
+}
+
+.age-modal form {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.age-modal label {
+  margin-bottom: 8px;
+
+  text-align: left;
+
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+
+  color: #4a1518;
+}
+
+.age-modal input {
+  width: 100%;
+
+  padding: 15px;
+
+  border: 1px solid #c8bfb5;
+
+  background: #fff;
+
+  color: #241a17;
+
+  font-size: 16px;
+
+  outline: none;
+
+  transition: border-color 0.3s ease;
+}
+
+.age-modal input:focus {
+  border-color: #4a1518;
+}
+
+.age-error {
+  margin-top: 12px;
+
+  text-align: left;
+
+  font-size: 13px;
+  line-height: 1.5;
+
+  color: #a32929;
+}
+
+.age-buttons {
+  display: flex;
+  justify-content: center;
+
+  gap: 12px;
+
+  margin-top: 25px;
+}
+
+.age-buttons button {
+  flex: 1;
+
+  padding: 15px 20px;
+
+  border: 1px solid #4a1518;
+
+  background: #4a1518;
+
+  color: #fff;
+
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+
+  cursor: pointer;
+
+  transition: all 0.3s ease;
+}
+
+.age-buttons button:hover {
+  background: #321012;
+}
+
+.age-buttons .age-no-button {
+  background: transparent;
+
+  color: #4a1518;
+}
+
+.age-buttons .age-no-button:hover {
+  background: #4a1518;
+
+  color: #fff;
+}
+
+.responsibility-text {
+  margin-top: 30px;
+
+  font-size: 12px;
+  letter-spacing: 1px;
+
+  color: #8a817b;
+}
+
+
+/* Mobile */
+
+@media (max-width: 600px) {
+  .age-modal {
+    padding: 45px 25px;
+  }
+
+  .age-logo {
+    font-size: 23px;
+    letter-spacing: 4px;
+  }
+
+  .age-modal h1 {
+    font-size: 32px;
+  }
+
+  .age-description {
+    font-size: 14px;
+  }
+
+  .age-buttons {
+    flex-direction: column;
+  }
+
+  .age-buttons button {
+    width: 100%;
+  }
+}
