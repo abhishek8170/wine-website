@@ -262,7 +262,14 @@ const getProducts = async (req, res) => {
     // SPECIAL COLLECTION
     // -------------------------------------------------
 
-    if (collection) {
+    // BEST SELLERS:
+  
+
+    if (collection === "best-sellers") {
+      conditions.push(`
+        COALESCE(sales_stats.total_sold, 0) > 0
+      `);
+    } else if (collection) {
       values.push(collection);
 
       conditions.push(`
@@ -284,49 +291,62 @@ const getProducts = async (req, res) => {
 
     let orderBy = "p.created_at DESC";
 
-    switch (sort) {
-      case "price-low":
-        orderBy = `
-          (
-            SELECT MIN(pv_sort.selling_price)
-            FROM product_variants pv_sort
-            WHERE pv_sort.product_id = p.id
-              AND pv_sort.is_active = TRUE
-          ) ASC NULLS LAST
-        `;
-        break;
+    // -------------------------------------------------
+    // BEST SELLERS SORT
+    // -------------------------------------------------
 
-      case "price-high":
-        orderBy = `
-          (
-            SELECT MIN(pv_sort.selling_price)
-            FROM product_variants pv_sort
-            WHERE pv_sort.product_id = p.id
-              AND pv_sort.is_active = TRUE
-          ) DESC NULLS LAST
-        `;
-        break;
 
-      case "highest-rated":
-        orderBy = `
-          COALESCE(review_stats.average_rating, 0) DESC,
-          COALESCE(review_stats.review_count, 0) DESC
-        `;
-        break;
+    if (collection === "best-sellers") {
+      orderBy = `
+        COALESCE(sales_stats.total_sold, 0) DESC,
+        p.created_at DESC,
+        p.id DESC
+      `;
+    } else {
+      switch (sort) {
+        case "price-low":
+          orderBy = `
+            (
+              SELECT MIN(pv_sort.selling_price)
+              FROM product_variants pv_sort
+              WHERE pv_sort.product_id = p.id
+                AND pv_sort.is_active = TRUE
+            ) ASC NULLS LAST
+          `;
+          break;
 
-      case "newest":
-        orderBy = "p.created_at DESC";
-        break;
+        case "price-high":
+          orderBy = `
+            (
+              SELECT MIN(pv_sort.selling_price)
+              FROM product_variants pv_sort
+              WHERE pv_sort.product_id = p.id
+                AND pv_sort.is_active = TRUE
+            ) DESC NULLS LAST
+          `;
+          break;
 
-      case "popular":
-        orderBy = `
-          COALESCE(review_stats.review_count, 0) DESC,
-          COALESCE(review_stats.average_rating, 0) DESC
-        `;
-        break;
+        case "highest-rated":
+          orderBy = `
+            COALESCE(review_stats.average_rating, 0) DESC,
+            COALESCE(review_stats.review_count, 0) DESC
+          `;
+          break;
 
-      default:
-        orderBy = "p.created_at DESC";
+        case "newest":
+          orderBy = "p.created_at DESC";
+          break;
+
+        case "popular":
+          orderBy = `
+            COALESCE(review_stats.review_count, 0) DESC,
+            COALESCE(review_stats.average_rating, 0) DESC
+          `;
+          break;
+
+        default:
+          orderBy = "p.created_at DESC";
+      }
     }
 
     // -------------------------------------------------
@@ -338,6 +358,10 @@ const getProducts = async (req, res) => {
         p.id,
         p.name,
         p.description,
+
+        -- PRODUCT IMAGE
+        p.image_url,
+
         p.vintage,
         p.alcohol_percentage,
         p.region,
@@ -361,6 +385,9 @@ const getProducts = async (req, res) => {
 
         COALESCE(review_stats.average_rating, 0) AS average_rating,
         COALESCE(review_stats.review_count, 0) AS review_count,
+
+        -- TOTAL UNITS SOLD
+        COALESCE(sales_stats.total_sold, 0)::integer AS total_sold,
 
         (
           SELECT json_agg(
@@ -403,6 +430,10 @@ const getProducts = async (req, res) => {
       LEFT JOIN wineries w
         ON p.winery_id = w.id
 
+      -- -------------------------------------------------
+      -- REVIEW STATISTICS
+      -- -------------------------------------------------
+
       LEFT JOIN (
         SELECT
           product_id,
@@ -415,6 +446,29 @@ const getProducts = async (req, res) => {
       ) review_stats
         ON p.id = review_stats.product_id
 
+      -- -------------------------------------------------
+      -- SALES STATISTICS
+      -- -------------------------------------------------
+      --
+      -- Actual quantity purchased from order_items.
+      -- Cancelled orders are excluded.
+      -- -------------------------------------------------
+
+      LEFT JOIN (
+        SELECT
+          oi.product_id,
+          SUM(oi.quantity) AS total_sold
+        FROM order_items oi
+
+        INNER JOIN orders o
+          ON o.id = oi.order_id
+
+        WHERE LOWER(COALESCE(o.order_status, '')) <> 'cancelled'
+
+        GROUP BY oi.product_id
+      ) sales_stats
+        ON p.id = sales_stats.product_id
+
       WHERE ${conditions.join(" AND ")}
 
       ORDER BY ${orderBy}
@@ -422,6 +476,7 @@ const getProducts = async (req, res) => {
 
     console.log("PRODUCT FILTER QUERY:");
     console.log(query);
+
     console.log("PRODUCT FILTER VALUES:");
     console.log(values);
 
@@ -445,9 +500,9 @@ const getProducts = async (req, res) => {
   }
 };
 
-
 // =====================================================
 // GET BEST SELLERS
+// Automatically calculated from actual purchases
 // =====================================================
 
 const getBestSellers = async (req, res) => {
@@ -457,6 +512,10 @@ const getBestSellers = async (req, res) => {
         p.id,
         p.name,
         p.description,
+
+        -- PRODUCT IMAGE
+        p.image_url,
+
         p.vintage,
         p.alcohol_percentage,
         p.region,
@@ -480,6 +539,9 @@ const getBestSellers = async (req, res) => {
 
         COALESCE(review_stats.average_rating, 0) AS average_rating,
         COALESCE(review_stats.review_count, 0) AS review_count,
+
+        -- TOTAL NUMBER OF UNITS PURCHASED
+        COALESCE(sales_stats.total_sold, 0)::integer AS total_sold,
 
         (
           SELECT json_agg(
@@ -522,6 +584,10 @@ const getBestSellers = async (req, res) => {
       LEFT JOIN wineries w
         ON p.winery_id = w.id
 
+      -- -------------------------------------------------
+      -- REVIEW STATISTICS
+      -- -------------------------------------------------
+
       LEFT JOIN (
         SELECT
           product_id,
@@ -534,16 +600,36 @@ const getBestSellers = async (req, res) => {
       ) review_stats
         ON p.id = review_stats.product_id
 
-      INNER JOIN product_collections pc
-        ON p.id = pc.product_id
+      -- -------------------------------------------------
+      -- SALES STATISTICS
+      --
+      -- Count actual quantity purchased from order_items.
+      -- Cancelled orders are excluded.
+      -- -------------------------------------------------
 
-      INNER JOIN collections col
-        ON pc.collection_id = col.id
+      LEFT JOIN (
+        SELECT
+          oi.product_id,
+          SUM(oi.quantity) AS total_sold
+        FROM order_items oi
+
+        INNER JOIN orders o
+          ON o.id = oi.order_id
+
+        WHERE LOWER(COALESCE(o.order_status, '')) <> 'cancelled'
+
+        GROUP BY oi.product_id
+      ) sales_stats
+        ON p.id = sales_stats.product_id
 
       WHERE p.is_active = TRUE
-        AND col.slug = 'best-sellers'
 
-      ORDER BY p.created_at DESC
+      -- Highest number of purchased units first.
+      -- created_at is used only to break ties.
+      ORDER BY
+        COALESCE(sales_stats.total_sold, 0) DESC,
+        p.created_at DESC,
+        p.id DESC
     `);
 
     console.log("BEST SELLERS API RESULT:");
@@ -564,7 +650,6 @@ const getBestSellers = async (req, res) => {
   }
 };
 
-
 // =====================================================
 // GET SINGLE PRODUCT BY ID
 // =====================================================
@@ -579,6 +664,10 @@ const getProductById = async (req, res) => {
         p.id,
         p.name,
         p.description,
+
+        -- PRODUCT IMAGE
+        p.image_url,
+
         p.vintage,
         p.alcohol_percentage,
         p.region,
@@ -682,7 +771,6 @@ const getProductById = async (req, res) => {
     });
   }
 };
-
 
 // =====================================================
 // EXPORT CONTROLLERS

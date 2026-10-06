@@ -19,13 +19,16 @@ const getWishlist = async (req, res) => {
         p.is_active,
         c.name AS category_name,
 
-        (
-          SELECT pi.image_url
-          FROM product_images pi
-          WHERE pi.product_id = p.id
-          ORDER BY pi.is_primary DESC, pi.sort_order ASC, pi.id ASC
-          LIMIT 1
-        ) AS image_url,
+        COALESCE(
+  NULLIF(p.image_url, ''),
+  (
+    SELECT pi.image_url
+    FROM product_images pi
+    WHERE pi.product_id = p.id
+    ORDER BY pi.is_primary DESC, pi.sort_order ASC, pi.id ASC
+    LIMIT 1
+  )
+) AS image_url,
 
         (
           SELECT pv.id

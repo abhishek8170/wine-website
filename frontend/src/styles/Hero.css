@@ -1,0 +1,327 @@
+/* ==========================================================
+   CINEMATIC SCROLL-SCRUBBED HERO
+   Hero.jsx draws video frames on the canvas and moves the text.
+   The stage is sticky and sits BELOW the header.
+   ========================================================== */
+
+.hero {
+  --hero-header-h: 88px;      /* real value is measured by Hero.jsx */
+  --hero-track: 600vh;        /* total scroll length (longer = slower video) */
+  --p: 0;
+
+  position: relative;
+  z-index: 1;
+  height: var(--hero-track);
+  background: #050203;
+  /* no overflow:hidden here, it would break position: sticky */
+}
+
+.hero-stage {
+  position: sticky;
+  top: var(--hero-header-h);
+  height: calc(100vh - var(--hero-header-h));
+  height: calc(100svh - var(--hero-header-h));
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  background: #050203;
+  isolation: isolate;
+}
+
+/* ---------- the video canvas ---------- */
+
+.hero-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  /* very slow push-in as you scroll */
+  transform: scale(calc(1 + var(--p) * 0.01));
+  will-change: transform;
+}
+
+.hero-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, rgba(5, 2, 3, 0.72) 0%, rgba(5, 2, 3, 0.25) 45%, rgba(5, 2, 3, 0) 70%),
+    radial-gradient(ellipse at 50% 50%, rgba(0, 0, 0, 0) 55%, rgba(0, 0, 0, 0.55) 100%);
+}
+
+/* Bottom fade to black: appears during the last ~15% of the scroll, so
+   when the hero ends the picture melts into the black WineTypes section
+   instead of ending on a hard edge. (Text sits above it, z-index 3.) */
+.hero-stage::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 34%;
+  z-index: 2;
+  pointer-events: none;
+  background: linear-gradient(to bottom, rgba(10, 5, 6, 0) 0%, #0a0506 100%);
+  opacity: clamp(0, calc((var(--p) - 0.84) * 6.25), 1);
+}
+
+/* ---------- original hero copy ---------- */
+
+.hero-intro {
+  position: relative;
+  z-index: 3;
+  width: 100%;
+  will-change: transform, opacity;
+}
+
+.hero-content {
+  position: relative;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 80px 2%;
+  text-align: left;
+  animation: heroFadeIn 1.2s ease-out;
+}
+
+.hero-label {
+  margin-bottom: 20px;
+  font-size: 13px;
+  letter-spacing: 6px;
+  text-transform: uppercase;
+  color: #c9a45c;
+}
+
+.hero h1 {
+  margin: 0;
+  max-width: 750px;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(55px, 6vw, 100px);
+  line-height: 0.95;
+  font-weight: 400;
+  color: #f4ead7;
+  text-transform: uppercase;
+}
+
+.hero-subtitle {
+  margin-top: 30px;
+  margin-bottom: 35px;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(18px, 2vw, 26px);
+  font-style: italic;
+  color: #f4ead7;
+}
+
+.hero-button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 17px 34px;
+  border: 1px solid #c9a45c;
+  color: #f4ead7;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  transition: color 0.35s ease, box-shadow 0.35s ease;
+  isolation: isolate;
+}
+
+.hero-button::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: #c9a45c;
+  transform: translateY(105%);
+  transition: transform 0.4s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.hero-button:hover {
+  color: #180909;
+  box-shadow: 0 12px 35px rgba(201, 164, 92, 0.18);
+}
+
+.hero-button:hover::before {
+  transform: translateY(0);
+}
+
+/* ---------- scroll captions ---------- */
+
+.hero-caption {
+  position: absolute;
+  z-index: 3;
+  top: 50%;
+  margin-top: -80px;
+  max-width: 460px;
+  will-change: transform, opacity;
+  text-shadow: 0 2px 30px rgba(0, 0, 0, 0.8);
+}
+
+.hero-caption--right  { right: 7.5%; text-align: right; }
+.hero-caption--left   { left: 7.5%;  text-align: left; }
+.hero-caption--center {
+  left: 50%;
+  margin-left: -230px;
+  width: 460px;
+  text-align: center;
+  top: auto;
+  bottom: 9%;
+  margin-top: 0;
+}
+
+.hero-caption-eyebrow {
+  margin: 0 0 18px;
+  font-size: 12px;
+  letter-spacing: 6px;
+  text-transform: uppercase;
+  color: #c9a45c;
+}
+
+.hero-caption-text {
+  margin: 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(30px, 3.6vw, 58px);
+  line-height: 1.12;
+  color: #f4ead7;
+}
+
+.hero-caption-text span {
+  display: block;
+}
+
+.hero-caption-button {
+  margin-top: 28px;
+  background: rgba(10, 3, 5, 0.35);
+}
+
+/* ---------- scroll cue + progress line ---------- */
+
+.hero-scroll-cue {
+  position: absolute;
+  left: 50%;
+  bottom: 22px;
+  z-index: 3;
+  width: 60px;
+  margin-left: -30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  pointer-events: none;
+  font-size: 10px;
+  letter-spacing: 4px;
+  color: rgba(244, 234, 215, 0.7);
+  opacity: calc(1 - var(--p) * 25);
+}
+
+.hero-scroll-cue i {
+  display: block;
+  width: 1px;
+  height: 38px;
+  background: linear-gradient(#c9a45c, rgba(201, 164, 92, 0));
+  transform-origin: top;
+  animation: heroCue 2.4s ease-in-out infinite;
+}
+
+
+@keyframes heroFadeIn {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes heroFadeInMobile {
+  from { opacity: 0; transform: translateY(-35px); }
+  to   { opacity: 1; transform: translateY(-65px); }
+}
+
+@keyframes heroCue {
+  0%   { transform: scaleY(0); opacity: 0; }
+  40%  { transform: scaleY(1); opacity: 1; }
+  100% { transform: scaleY(1); opacity: 0; }
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 768px) {
+  .hero { --hero-track: 500vh; }
+
+  .hero-stage {
+    padding-bottom: 72px;       /* room for the fixed mobile bottom nav */
+    box-sizing: border-box;
+  }
+
+  .hero-scrim {
+    background:
+      linear-gradient(180deg, rgba(5, 2, 3, 0.55) 0%, rgba(5, 2, 3, 0.1) 45%, rgba(5, 2, 3, 0.55) 100%);
+  }
+
+  .hero-content {
+    width: 65%;
+    padding: 0;
+    margin-left: 18px;
+    transform: translateY(-65px);
+    animation: heroFadeInMobile 1.2s ease-out forwards;
+  }
+
+  .hero-label { margin-bottom: 14px; font-size: 9px; letter-spacing: 3px; }
+  .hero h1 { font-size: 35px; line-height: 1.04; max-width: 350px; }
+  .hero-subtitle { margin-top: 20px; max-width: 300px; font-size: 15px; line-height: 1.45; }
+  .hero-button { margin-top: 25px; padding: 13px 23px; font-size: 9px; letter-spacing: 2px; }
+
+  /* captions: centred near the top/bottom so the footage stays visible */
+  .hero-caption,
+  .hero-caption--left,
+  .hero-caption--right {
+    left: 20px;
+    right: 20px;
+    top: auto;
+    bottom: 110px;
+    margin: 0;
+    max-width: none;
+    text-align: center;
+  }
+
+  .hero-caption--center {
+    left: 20px;
+    right: 20px;
+    width: auto;
+    margin: 0;
+    bottom: 110px;
+  }
+
+  .hero-caption-eyebrow { font-size: 10px; letter-spacing: 4px; margin-bottom: 12px; }
+  .hero-caption-text { font-size: clamp(26px, 8vw, 38px); }
+  .hero-caption-button { margin-top: 20px; }
+  .hero-scroll-cue { bottom: 88px; }
+}
+
+@media (max-width: 480px) {
+  .hero-content { width: 68%; margin-left: 15px; transform: translateY(-90px); }
+  .hero-label { font-size: 8px; letter-spacing: 2.5px; }
+  .hero h1 { font-size: 32px; line-height: 1.05; }
+  .hero-subtitle { font-size: 14px; max-width: 270px; }
+  .hero-button { margin-top: 25px; padding: 12px 20px; }
+}
+
+/* =========================
+   REDUCED MOTION: no scrubbing, short static hero showing the final still
+========================= */
+
+.hero--static { height: auto; }
+.hero--static .hero-stage { position: relative; top: 0; min-height: calc(100vh - var(--hero-header-h)); }
+.hero--static .hero-canvas { transform: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-content { animation: none; }
+  .hero-scroll-cue i { animation: none; }
+}

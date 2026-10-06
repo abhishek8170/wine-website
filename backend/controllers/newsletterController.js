@@ -1,5 +1,10 @@
 const pool = require("../config/db");
 
+const {
+  notifyNewsletterSubscribed,
+  emitCreatedAdminNotification,
+} = require("../utils/adminNotificationEvents");
+
 /*
 ============================================================
 SUBSCRIBE TO NEWSLETTER
@@ -132,6 +137,21 @@ const subscribeToNewsletter = async (req, res) => {
         firstName?.trim() || null,
       ]
     );
+
+    // Admin notification (must never break subscription)
+    try {
+      const adminNotification = await notifyNewsletterSubscribed(pool, {
+        subscriberId: result.rows[0].id,
+        email: result.rows[0].email,
+      });
+
+      emitCreatedAdminNotification(adminNotification);
+    } catch (notificationError) {
+      console.error(
+        "Newsletter admin notification error:",
+        notificationError
+      );
+    }
 
     return res.status(201).json({
       success: true,

@@ -5,6 +5,7 @@ const {
   createOrder,
   getCustomerOrders,
   getCustomerOrderDetails,
+  cancelCustomerOrder,
 } = require("../controllers/orderController");
 
 const router = express.Router();
@@ -46,5 +47,11 @@ router.get(
 // =====================================
 
 router.post("/", createOrder);
+
+// =====================================
+// CANCEL ORDER (CUSTOMER)
+// =====================================
+
+router.patch("/:id/cancel", cancelCustomerOrder);
 
 module.exports = router;

@@ -1,0 +1,67 @@
+
+.home-still-bg {
+  position: relative;
+  z-index: 0;
+  background: #050203;
+  /* clip-path stops the fixed layer from showing outside this wrapper */
+  clip-path: inset(0);
+}
+
+/* The still: same box as the hero stage, so the hand-off has no jump */
+.home-still-bg::before {
+  content: "";
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: var(--hero-header-h, 88px);
+  height: calc(100vh - var(--hero-header-h, 88px));
+  height: calc(100svh - var(--hero-header-h, 88px));
+  z-index: -1;
+  background: url("/hero-frames/last.jpg") center / cover no-repeat;
+}
+
+/* ---------- section backgrounds ---------- */
+
+/* Cream sections (BestSellers, Collections, WinePairing, Reviews,
+   Newsletter): almost solid, so the still doesn't show up as a
+   muddy ghost behind the product cards. Lower 0.97 to let more through. */
+.home-still-bg > section {
+  background-color: rgba(243, 232, 215, 0.97);
+}
+
+/* Dark burgundy sections (OurStory, FeaturedWines, WineGuide):
+   they use the colour #241311 in their class name */
+.home-still-bg > section[class*="241311"] {
+  background-color: rgba(36, 19, 17, 0.86);
+}
+
+/* ---------- WineTypes: pure black ----------
+   The first section after the hero is solid black. The still (last
+   video frame) is NOT visible here; the hero fades to black at its
+   bottom (see .hero-stage::after in Hero.css) so the two meet cleanly. */
+.home-still-bg > section.wine-types {
+  background-color: #0a0506;
+  background-image: none;
+  border-bottom: 1px solid rgba(201, 164, 92, 0.35);
+}
+
+.home-still-bg .wine-types-label {
+  color: #c9a45c;
+}
+
+.home-still-bg .wine-types-heading h2 {
+  color: #f3e8d7;
+  text-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+}
+
+.home-still-bg .wine-types-intro {
+  color: #d8c8b6;
+}
+
+@media (max-width: 768px) {
+  .home-still-bg::before {
+    top: var(--hero-header-h, 78px);
+    height: calc(100svh - var(--hero-header-h, 78px));
+  }
+
+}

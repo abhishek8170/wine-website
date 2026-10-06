@@ -1,5 +1,10 @@
 const pool = require("../config/db");
 
+const {
+  notifyContactMessage,
+  emitCreatedAdminNotification,
+} = require("../utils/adminNotificationEvents");
+
 // =========================================================
 // GET CONTACT SETTINGS
 // =========================================================
@@ -176,6 +181,22 @@ const submitContactMessage = async (req, res) => {
         message.trim(),
       ]
     );
+
+    // Admin notification (must never break the form submission)
+    try {
+      const adminNotification = await notifyContactMessage(pool, {
+        messageId: result.rows[0].id,
+        customerName: result.rows[0].name,
+        subject: result.rows[0].subject,
+      });
+
+      emitCreatedAdminNotification(adminNotification);
+    } catch (notificationError) {
+      console.error(
+        "Contact message admin notification error:",
+        notificationError
+      );
+    }
 
     res.status(201).json({
       success: true,
