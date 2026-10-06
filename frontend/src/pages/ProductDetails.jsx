@@ -50,7 +50,7 @@ function ProductDetails() {
         setActionError("");
 
         const response = await fetch(
-          `http://localhost:5000/api/products/${id}`
+          `/api/products/${id}`
         );
 
         if (!response.ok) {
@@ -87,7 +87,7 @@ function ProductDetails() {
         setReviewsError("");
 
         const response = await fetch(
-          `http://localhost:5000/api/reviews/product/${id}`
+          `/api/reviews/product/${id}`
         );
 
         if (!response.ok) {

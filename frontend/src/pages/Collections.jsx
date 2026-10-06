@@ -4,7 +4,7 @@ import { useSiteSettings } from "../context/SiteSettingsContext.jsx";
 import { getImageUrl } from "../utils/image";
 import { useCart } from "../context/CartContext.jsx";
 
-const API_BASE = "http://localhost:5000/api";
+const API_BASE = "/api";
 
 export default function Collections() {
 

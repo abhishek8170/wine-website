@@ -38,7 +38,7 @@ function WineTypes() {
     const fetchCategories = async () => {
       try {
         const response = await fetch(
-          "http://localhost:5000/api/categories"
+          "/api/categories"
         );
 
         if (!response.ok) {

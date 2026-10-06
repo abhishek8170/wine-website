@@ -70,7 +70,7 @@ function Header({ brandName: brandNameProp }) {
     ? settings.logo_url.startsWith("http://") ||
       settings.logo_url.startsWith("https://")
       ? settings.logo_url
-      : `http://localhost:5000${
+      : `${
           settings.logo_url.startsWith("/")
             ? settings.logo_url
             : `/${settings.logo_url}`
@@ -142,7 +142,7 @@ function Header({ brandName: brandNameProp }) {
         unreadResponse,
       ] = await Promise.all([
         fetch(
-          "http://localhost:5000/api/notifications",
+          "/api/notifications",
           {
             method: "GET",
             headers: {
@@ -152,7 +152,7 @@ function Header({ brandName: brandNameProp }) {
         ),
 
         fetch(
-          "http://localhost:5000/api/notifications/unread-count",
+          "/api/notifications/unread-count",
           {
             method: "GET",
             headers: {
@@ -231,7 +231,7 @@ useEffect(() => {
     return;
   }
 
-  const socket = io("http://localhost:5000", {
+  const socket = io(import.meta.env.VITE_SOCKET_URL, {
     transports: ["websocket", "polling"],
   });
 
@@ -351,7 +351,7 @@ useEffect(() => {
 
     try {
       const response = await fetch(
-        `http://localhost:5000/api/notifications/${notification.id}/read`,
+        `/api/notifications/${notification.id}/read`,
         {
           method: "PATCH",
           headers: {
@@ -404,7 +404,7 @@ useEffect(() => {
 
     try {
       const response = await fetch(
-        `http://localhost:5000/api/notifications/${notificationId}`,
+        `/api/notifications/${notificationId}`,
         {
           method: "DELETE",
           headers: {
@@ -490,7 +490,7 @@ useEffect(() => {
               try {
                 const response =
                   await fetch(
-                    `http://localhost:5000/api/notifications/${notificationId}`,
+                    `/api/notifications/${notificationId}`,
                     {
                       method: "DELETE",
                       headers: {

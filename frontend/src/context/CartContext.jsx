@@ -10,7 +10,7 @@ import { useAuth } from "./AuthContext.jsx";
 const CartContext = createContext(null);
 
 const CART_STORAGE_KEY = "wine_cart";
-const API_BASE_URL = "http://localhost:5000/api";
+const API_BASE_URL = "/api";
 
 /* -------------------------------------------------------
    NORMALIZE CART ITEMS

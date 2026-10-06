@@ -46,7 +46,7 @@ export const SiteSettingsProvider = ({ children }) => {
         setError("");
 
         const response = await fetch(
-          "http://localhost:5000/api/settings/public"
+          "/api/settings/public"
         );
 
         const data = await response.json();

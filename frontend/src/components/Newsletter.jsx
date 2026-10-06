@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useSiteSettings } from "../context/SiteSettingsContext.jsx";
-const API_URL = "http://localhost:5000/api/newsletter/subscribe";
+const API_URL = "/api/newsletter/subscribe";
 
 function Newsletter() {
    const { settings } = useSiteSettings();

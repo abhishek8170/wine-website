@@ -5,7 +5,7 @@ import { getImageUrl } from "../utils/image";
 import { useCart } from "../context/CartContext.jsx";
 import { useWishlist } from "../context/WishlistContext.jsx";
 
-const API_BASE_URL = "http://localhost:5000/api";
+const API_BASE_URL = "/api";
 
 function Wishlist() {
   const { addToCart } = useCart();

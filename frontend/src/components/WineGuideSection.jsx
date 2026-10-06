@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useSiteSettings } from "../context/SiteSettingsContext.jsx";
 
-const API_URL = "http://localhost:5000/api/wine-guide/featured";
+const API_URL = "/api/wine-guide/featured";
 
 function WineGuide() {
   const [articles, setArticles] = useState([]);

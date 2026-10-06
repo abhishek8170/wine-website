@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
-const API_BASE = "http://localhost:5000/api";
+const API_BASE = "/api";
 
 // Images are presentation assets for the homepage.
 // Collection names, descriptions and product counts come from PostgreSQL.

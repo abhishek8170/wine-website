@@ -1,4 +1,4 @@
-const BACKEND_URL = "http://localhost:5000";
+const BACKEND_URL = "";
 
 export const getImageUrl = (imageUrl) => {
   // No image → use existing frontend fallback

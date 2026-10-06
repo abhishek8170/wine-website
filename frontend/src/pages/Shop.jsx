@@ -3,7 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import ProductCard from "../components/ProductCard";
 import { useSiteSettings } from "../context/SiteSettingsContext.jsx";
 
-const API_URL = "http://localhost:5000/api/products";
+const API_URL = "/api/products";
 
 function Shop() {
   const { settings } = useSiteSettings();
@@ -97,7 +97,7 @@ function Shop() {
     const fetchCategories = async () => {
       try {
         const response = await fetch(
-          "http://localhost:5000/api/categories"
+          "/api/categories"
         );
 
         if (!response.ok) {

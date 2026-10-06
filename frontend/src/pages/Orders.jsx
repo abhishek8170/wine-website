@@ -14,7 +14,7 @@ const getImageUrl = (imageUrl) => {
     return imageUrl;
   }
 
-  return `http://localhost:5000${
+  return `${
     imageUrl.startsWith("/")
       ? imageUrl
       : `/${imageUrl}`
@@ -50,7 +50,7 @@ const Orders = () => {
         setError("");
 
         const response = await fetch(
-          "http://localhost:5000/api/orders",
+          "/api/orders",
           {
             method: "GET",
             headers: {

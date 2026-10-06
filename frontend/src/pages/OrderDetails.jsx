@@ -69,7 +69,7 @@ const OrderDetails = () => {
         setError("");
 
         const response = await fetch(
-          `http://localhost:5000/api/orders/${id}`,
+          `/api/orders/${id}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -143,7 +143,7 @@ const OrderDetails = () => {
       setCancelMessage("");
 
       const response = await fetch(
-        `http://localhost:5000/api/orders/${id}/cancel`,
+        `/api/orders/${id}/cancel`,
         {
           method: "PATCH",
           headers: {
@@ -326,7 +326,7 @@ const OrderDetails = () => {
       return image;
     }
 
-    return `http://localhost:5000${
+    return `${
       image.startsWith("/")
         ? image
         : `/${image}`
@@ -404,7 +404,7 @@ const OrderDetails = () => {
       setReviewMessage("");
 
       const response = await fetch(
-        "http://localhost:5000/api/reviews",
+        "/api/reviews",
         {
           method: "POST",
 

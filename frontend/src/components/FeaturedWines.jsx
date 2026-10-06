@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { getImageUrl } from "../utils/image";
 
-const API_URL = "http://localhost:5000/api/products";
+const API_URL = "/api/products";
 
 function FeaturedWines() {
   const [wines, setWines] = useState([]);

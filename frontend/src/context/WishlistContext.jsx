@@ -9,7 +9,7 @@ import { useAuth } from "./AuthContext.jsx";
 
 const WishlistContext = createContext(null);
 
-const API_BASE_URL = "http://localhost:5000/api";
+const API_BASE_URL = "/api";
 
 const getGuestId = () => {
   try {

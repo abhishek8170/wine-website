@@ -4,7 +4,7 @@ import { useAuth } from "../context/AuthContext";
 import { useWishlist } from "../context/WishlistContext.jsx";
 import { useSiteSettings } from "../context/SiteSettingsContext.jsx";
 
-const API_BASE_URL = "http://localhost:5000/api";
+const API_BASE_URL = "/api";
 
 const emptyAddressForm = {
   address_line_1: "",

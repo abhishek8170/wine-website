@@ -5,7 +5,7 @@ import { useCart } from "../context/CartContext.jsx";
 import { useAuth } from "../context/AuthContext.jsx";
 import { getImageUrl } from "../utils/image";
 
-const API_BASE_URL = "http://localhost:5000/api";
+const API_BASE_URL = "/api";
 
 const EMPTY_ADDRESS = {
   label: "Home",
