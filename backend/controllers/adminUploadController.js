@@ -1,48 +1,13 @@
-const fs = require("fs");
-const path = require("path");
 const multer = require("multer");
-
-const uploadDirectory = path.join(
-  __dirname,
-  "..",
-  "uploads"
-);
+const { v2: cloudinary } = require("cloudinary");
 
 /*
 |--------------------------------------------------------------------------
-| MAKE SURE UPLOAD DIRECTORY EXISTS
+| MULTER (keeps the uploaded file in memory, not on the server disk)
 |--------------------------------------------------------------------------
 */
 
-if (!fs.existsSync(uploadDirectory)) {
-  fs.mkdirSync(uploadDirectory, {
-    recursive: true,
-  });
-}
-
-/*
-|--------------------------------------------------------------------------
-| MULTER STORAGE
-|--------------------------------------------------------------------------
-*/
-
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, uploadDirectory);
-  },
-
-  filename: (req, file, cb) => {
-    const extension = path
-      .extname(file.originalname)
-      .toLowerCase();
-
-    const uniqueName = `product-${Date.now()}-${Math.round(
-      Math.random() * 1e9
-    )}${extension}`;
-
-    cb(null, uniqueName);
-  },
-});
+const storage = multer.memoryStorage();
 
 /*
 |--------------------------------------------------------------------------
@@ -86,6 +51,31 @@ const uploadImageMiddleware = multer({
 
 /*
 |--------------------------------------------------------------------------
+| SEND FILE TO CLOUDINARY
+|--------------------------------------------------------------------------
+*/
+
+const uploadBufferToCloudinary = (buffer, folder) =>
+  new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      {
+        folder,
+        resource_type: "image",
+      },
+      (error, result) => {
+        if (error) {
+          return reject(error);
+        }
+
+        return resolve(result);
+      }
+    );
+
+    stream.end(buffer);
+  });
+
+/*
+|--------------------------------------------------------------------------
 | HANDLE IMAGE UPLOAD
 |--------------------------------------------------------------------------
 */
@@ -94,12 +84,13 @@ const handleImageUpload = (
   req,
   res,
   successMessage,
-  logPrefix
+  logPrefix,
+  folder
 ) => {
   uploadImageMiddleware.single("image")(
     req,
     res,
-    (error) => {
+    async (error) => {
       if (error) {
         console.error(
           `${logPrefix} upload error:`,
@@ -130,21 +121,65 @@ const handleImageUpload = (
         });
       }
 
-      const imageUrl =
-        `/uploads/${req.file.filename}`;
+      if (
+        !process.env.CLOUDINARY_CLOUD_NAME ||
+        !process.env.CLOUDINARY_API_KEY ||
+        !process.env.CLOUDINARY_API_SECRET
+      ) {
+        console.error(
+          `${logPrefix} upload error: Cloudinary keys are missing in the environment variables.`
+        );
 
-      console.log(
-        `${logPrefix} IMAGE UPLOADED:`,
-        imageUrl
-      );
+        return res.status(500).json({
+          success: false,
+          message:
+            "Image storage is not configured.",
+        });
+      }
 
-      return res.status(201).json({
-        success: true,
-        message: successMessage,
-        imageUrl,
-        image_url: imageUrl,
-        filename: req.file.filename,
+      cloudinary.config({
+        cloud_name:
+          process.env.CLOUDINARY_CLOUD_NAME,
+        api_key:
+          process.env.CLOUDINARY_API_KEY,
+        api_secret:
+          process.env.CLOUDINARY_API_SECRET,
+        secure: true,
       });
+
+      try {
+        const result =
+          await uploadBufferToCloudinary(
+            req.file.buffer,
+            folder
+          );
+
+        const imageUrl = result.secure_url;
+
+        console.log(
+          `${logPrefix} IMAGE UPLOADED:`,
+          imageUrl
+        );
+
+        return res.status(201).json({
+          success: true,
+          message: successMessage,
+          imageUrl,
+          image_url: imageUrl,
+          filename: result.public_id,
+        });
+      } catch (uploadError) {
+        console.error(
+          `${logPrefix} Cloudinary upload error:`,
+          uploadError
+        );
+
+        return res.status(500).json({
+          success: false,
+          message:
+            "Failed to upload image. Please try again.",
+        });
+      }
     }
   );
 };
@@ -160,7 +195,8 @@ const uploadProductImage = (req, res) => {
     req,
     res,
     "Product image uploaded successfully.",
-    "PRODUCT"
+    "PRODUCT",
+    "vineora/products"
   );
 };
 
@@ -175,7 +211,8 @@ const uploadGiftSetImage = (req, res) => {
     req,
     res,
     "Gift set image uploaded successfully.",
-    "GIFT SET"
+    "GIFT SET",
+    "vineora/gift-sets"
   );
 };
 
