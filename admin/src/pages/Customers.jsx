@@ -252,7 +252,7 @@ const CustomerDetailsModal = ({
     details?.reviews || [];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#241312]/55 p-3 backdrop-blur-sm sm:p-6">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[#241312]/55 p-3 backdrop-blur-sm sm:p-6">
       <div className="flex max-h-[94vh] w-full max-w-6xl flex-col overflow-hidden rounded-3xl border border-[#dfcdb8] bg-[#fdf8f0] shadow-[0_30px_100px_rgba(35,18,17,0.25)]">
 
         {/* HEADER */}

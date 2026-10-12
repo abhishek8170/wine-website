@@ -425,7 +425,7 @@ const ShipmentFormModal = ({
 
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#241211]/55 p-4 backdrop-blur-sm">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[#241211]/55 p-4 backdrop-blur-sm">
       <div className="max-h-[92vh] w-full max-w-2xl overflow-y-auto rounded-[28px] border border-[#e1d2c0] bg-[#fffdf9] shadow-[0_30px_90px_rgba(35,17,15,0.22)]">
         <div className="sticky top-0 z-10 flex items-center justify-between border-b border-[#eadfd3] bg-[#fffdf9]/95 px-6 py-5 backdrop-blur">
           <div>
@@ -694,7 +694,7 @@ const ShipmentDetailModal = ({
 
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#241211]/60 p-3 backdrop-blur-sm sm:p-5">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[#241211]/60 p-3 backdrop-blur-sm sm:p-5">
       <div className="max-h-[94vh] w-full max-w-5xl overflow-y-auto rounded-[28px] border border-[#dfd0bd] bg-[#fffdf9] shadow-[0_30px_100px_rgba(35,17,15,0.25)]">
         <div className="sticky top-0 z-20 flex items-center justify-between border-b border-[#eadfd3] bg-[#fffdf9]/95 px-5 py-4 backdrop-blur sm:px-7">
           <div>

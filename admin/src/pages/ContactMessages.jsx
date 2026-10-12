@@ -481,7 +481,7 @@ const ContactMessages = () => {
 
       {selectedMessage && (
 
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#351716]/55 p-4 backdrop-blur-[2px]">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[#351716]/55 p-4 backdrop-blur-[2px]">
 
           <div className="flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-2xl border border-[#dfcdb5] bg-[#fffaf3] shadow-[0_20px_70px_rgba(53,23,22,0.25)]">
 

@@ -631,7 +631,7 @@ const AdminManagement = () => {
 
       {/* Modal */}
       {modal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 p-4">
           <div className="w-full max-w-lg rounded-2xl border border-[#c9a45c]/20 bg-[#f8f1e6] shadow-2xl">
             {/* Modal Header */}
             <div className="flex items-center justify-between border-b border-[#c9a45c]/20 px-6 py-5">

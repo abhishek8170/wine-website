@@ -15,7 +15,10 @@ import {
 } from "lucide-react";
 import { useAdminAuth } from "../context/AdminAuthContext";
 
-const API_BASE = "http://localhost:5000/api";
+const API_BASE =
+  import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api";
+
+const SERVER_URL = API_BASE.replace(/\/api\/?$/, "");
 
 const getToken = () =>
   sessionStorage.getItem("adminToken") ||
@@ -33,7 +36,7 @@ const getImageUrl = (imageUrl) => {
     return imageUrl;
   }
 
-  return `http://localhost:5000${
+    return `${SERVER_URL}${
     imageUrl.startsWith("/") ? imageUrl : `/${imageUrl}`
   }`;
 };
@@ -1957,7 +1960,7 @@ function Collections() {
       ===================================================== */}
 
       {collectionModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#351716]/40 p-4 backdrop-blur-sm">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[#351716]/40 p-4 backdrop-blur-sm">
           <div className="flex max-h-[92vh] w-full max-w-3xl flex-col overflow-hidden rounded-3xl border border-[#351716]/10 bg-[#f8f1e6] shadow-2xl">
 
             <div className="flex items-center justify-between border-b border-[#351716]/10 px-6 py-5">
@@ -2313,7 +2316,7 @@ function Collections() {
       ===================================================== */}
 
       {giftSetModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#351716]/40 p-4 backdrop-blur-sm">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[#351716]/40 p-4 backdrop-blur-sm">
           <div className="flex max-h-[92vh] w-full max-w-4xl flex-col overflow-hidden rounded-3xl border border-[#351716]/10 bg-[#f8f1e6] shadow-2xl">
 
             {/* HEADER */}

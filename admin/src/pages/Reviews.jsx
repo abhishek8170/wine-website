@@ -888,7 +888,7 @@ const Reviews = () => {
 
       {/* REVIEW DETAILS MODAL */}
       {selectedReview && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#351716]/50 p-4">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[#351716]/50 p-4">
           <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto border border-[#c9a45c]/30 bg-[#f8f1e6] shadow-2xl">
 
             {/* MODAL HEADER */}

@@ -1010,7 +1010,7 @@ export default function Inventory() {
       ===================================== */}
 
       {stockAction && selectedVariant && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#25100f]/55 p-4 backdrop-blur-sm">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[#25100f]/55 p-4 backdrop-blur-sm">
 
           <div className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-3xl border border-[#decdb0] bg-[#fffdf8] shadow-2xl">
 
@@ -1176,7 +1176,7 @@ export default function Inventory() {
       ===================================== */}
 
       {historyVariant && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#25100f]/55 p-4 backdrop-blur-sm">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[#25100f]/55 p-4 backdrop-blur-sm">
 
           <div className="max-h-[90vh] w-full max-w-4xl overflow-hidden rounded-3xl border border-[#decdb0] bg-[#fffdf8] shadow-2xl">
 
