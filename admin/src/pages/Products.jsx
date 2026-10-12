@@ -389,6 +389,20 @@ const Products = () => {
   };
 
   /* =======================================================
+     REMOVE IMAGE
+  ======================================================= */
+
+  const handleRemoveImage = () => {
+    setImageFile(null);
+    setImagePreview("");
+
+    setForm((previous) => ({
+      ...previous,
+      image_url: "",
+    }));
+  };
+
+  /* =======================================================
      SAVE PRODUCT
   ======================================================= */
 
@@ -486,6 +500,9 @@ const Products = () => {
         image_url:
           imageUrl || null,
 
+        remove_image:
+          Boolean(editingProduct?.image_url) && !imageUrl,
+
         vintage: form.vintage
           ? Number(form.vintage)
           : null,
@@ -493,8 +510,8 @@ const Products = () => {
         alcohol_percentage:
           form.alcohol_percentage
             ? Number(
-                form.alcohol_percentage
-              )
+              form.alcohol_percentage
+            )
             : null,
 
         region:
@@ -589,7 +606,7 @@ const Products = () => {
 
       alert(
         error.message ||
-          "Failed to save product. Please try again."
+        "Failed to save product. Please try again."
       );
     } finally {
       setSaving(false);
@@ -636,7 +653,7 @@ const Products = () => {
 
       alert(
         error.message ||
-          "Failed to update product status."
+        "Failed to update product status."
       );
     }
   };
@@ -921,12 +938,12 @@ const Products = () => {
                             <td className="px-5 py-4 text-sm">
 
                               {variant?.selling_price !=
-                              null
+                                null
                                 ? `₹${Number(
-                                    variant.selling_price
-                                  ).toLocaleString(
-                                    "en-IN"
-                                  )}`
+                                  variant.selling_price
+                                ).toLocaleString(
+                                  "en-IN"
+                                )}`
                                 : "—"}
 
                             </td>
@@ -1104,12 +1121,12 @@ const Products = () => {
                               <p className="mt-1 font-medium">
 
                                 {variant?.selling_price !=
-                                null
+                                  null
                                   ? `₹${Number(
-                                      variant.selling_price
-                                    ).toLocaleString(
-                                      "en-IN"
-                                    )}`
+                                    variant.selling_price
+                                  ).toLocaleString(
+                                    "en-IN"
+                                  )}`
                                   : "—"}
 
                               </p>
@@ -1523,7 +1540,19 @@ const Products = () => {
 
                           <div className="grid gap-5 md:grid-cols-[220px_1fr]">
 
-                            <div className="flex h-64 items-center justify-center overflow-hidden rounded-2xl border border-[#dfd1c1] bg-white">
+                            <div className="relative flex h-64 items-center justify-center overflow-hidden rounded-2xl border border-[#dfd1c1] bg-white">
+
+                              {imagePreview && (
+                                <button
+                                  type="button"
+                                  onClick={handleRemoveImage}
+                                  title="Remove image"
+                                  aria-label="Remove image"
+                                  className="absolute right-2 top-2 z-10 flex h-8 w-8 items-center justify-center rounded-full border border-[#d9cbbb] bg-white/90 text-[#6c5850] shadow transition hover:bg-red-50 hover:text-red-700"
+                                >
+                                  <X size={16} />
+                                </button>
+                              )}
 
                               {imagePreview ? (
 
@@ -1577,6 +1606,9 @@ const Products = () => {
                                   type="file"
                                   accept="image/jpeg,image/jpg,image/png,image/webp"
                                   className="hidden"
+                                  onClick={(event) => {
+                                    event.target.value = "";
+                                  }}
                                   onChange={
                                     handleImageChange
                                   }
@@ -2014,7 +2046,7 @@ const Products = () => {
 
         {variantsProduct && (
 
-          <div className="fixed inset-0 z-[80] overflow-y-auto bg-[#241311]/70 p-4 backdrop-blur-sm sm:p-6">
+          <div className="fixed inset-0 z-[100] overflow-y-auto bg-[#241311]/70 p-4 backdrop-blur-sm sm:p-6">
 
             <div className="mx-auto flex min-h-full max-w-6xl items-center justify-center">
 
