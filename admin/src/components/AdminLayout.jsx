@@ -39,6 +39,23 @@ const AdminLayout = ({ children }) => {
   const location = useLocation();
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(
+    () => localStorage.getItem("adminSidebarCollapsed") === "true"
+  );
+
+  const handleMenuClick = () => {
+    if (window.innerWidth >= 1024) {
+      // desktop: hide / show the sidebar
+      setSidebarCollapsed((current) => {
+        const next = !current;
+        localStorage.setItem("adminSidebarCollapsed", String(next));
+        return next;
+      });
+    } else {
+      // phone / tablet: open the slide-in menu
+      setSidebarOpen(true);
+    }
+  };
   const [brandName, setBrandName] = useState("VineWinbe");
 
   const [unreadNotifications, setUnreadNotifications] = useState(0);
@@ -318,10 +335,10 @@ const AdminLayout = ({ children }) => {
         current.map((item) =>
           Number(item.id) === Number(notification.id)
             ? {
-                ...item,
-                isRead: true,
-                is_read: true,
-              }
+              ...item,
+              isRead: true,
+              is_read: true,
+            }
             : item
         )
       );
@@ -487,7 +504,7 @@ const AdminLayout = ({ children }) => {
       month: "short",
       year:
         date.getFullYear() !==
-        new Date().getFullYear()
+          new Date().getFullYear()
           ? "numeric"
           : undefined,
     });
@@ -522,24 +539,25 @@ const AdminLayout = ({ children }) => {
         brandName={brandName}
         admin={admin}
         open={sidebarOpen}
+        collapsed={sidebarCollapsed}
         onClose={() => setSidebarOpen(false)}
         onLogout={handleLogout}
       />
 
       {/* GLOBAL ADMIN HEADER */}
-      <header className="fixed inset-x-0 top-0 z-[50] h-16 border-b border-[#c9a45c]/20 bg-[#2b1413]/95 text-[#f8efe2] shadow-[0_8px_30px_rgba(43,20,19,0.12)] backdrop-blur-xl lg:left-[272px]">
+      <header
+        className={`fixed inset-x-0 top-0 z-[50] h-16 border-b border-[#c9a45c]/20 bg-[#2b1413]/95 text-[#f8efe2] shadow-[0_8px_30px_rgba(43,20,19,0.12)] backdrop-blur-xl transition-[left] duration-300 ${sidebarCollapsed ? "lg:left-0" : "lg:left-[272px]"
+          }`}
+      >
         <div className="flex h-full items-center justify-between gap-3 px-4 sm:px-6 lg:px-8">
           <div className="flex min-w-0 items-center gap-3">
             <button
               type="button"
-              onClick={() => setSidebarOpen(true)}
-              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[#c9a45c]/30 bg-[#c9a45c]/10 text-[#c9a45c] transition hover:bg-[#c9a45c]/20 lg:hidden"
-              aria-label="Open admin navigation"
+              onClick={handleMenuClick}
+              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[#c9a45c]/30 bg-[#c9a45c]/10 text-[#c9a45c] transition hover:bg-[#c9a45c]/20"
+              aria-label="Toggle admin navigation"
             >
-              <Menu
-                size={20}
-                strokeWidth={1.8}
-              />
+              <Menu size={20} strokeWidth={1.8} />
             </button>
 
             <div className="flex min-w-0 items-center gap-2 lg:hidden">
@@ -650,7 +668,7 @@ const AdminLayout = ({ children }) => {
                         <p className="mt-2 text-[9px] uppercase tracking-[0.12em] text-[#a99682]">
                           {formatNotificationTime(
                             notificationPopup.createdAt ??
-                              notificationPopup.created_at
+                            notificationPopup.created_at
                           )}
                         </p>
                       </div>
@@ -805,19 +823,17 @@ const AdminLayout = ({ children }) => {
                           return (
                             <div
                               key={notification.id}
-                              className={`group relative flex items-start gap-3 border-b border-[#eee4d8] px-5 py-4 transition ${
-                                !isRead
-                                  ? "bg-[#fbf3e6]"
-                                  : "bg-[#fffaf3]"
-                              } hover:bg-[#f7efe4]`}
+                              className={`group relative flex items-start gap-3 border-b border-[#eee4d8] px-5 py-4 transition ${!isRead
+                                ? "bg-[#fbf3e6]"
+                                : "bg-[#fffaf3]"
+                                } hover:bg-[#f7efe4]`}
                             >
                               {/* ICON */}
                               <div
-                                className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${
-                                  isRead
-                                    ? "bg-[#f0e7dc] text-[#9b8a78]"
-                                    : "bg-[#351716] text-[#c9a45c]"
-                                }`}
+                                className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${isRead
+                                  ? "bg-[#f0e7dc] text-[#9b8a78]"
+                                  : "bg-[#351716] text-[#c9a45c]"
+                                  }`}
                               >
                                 {getNotificationIcon(
                                   notificationType
@@ -840,11 +856,10 @@ const AdminLayout = ({ children }) => {
                                   )}
 
                                   <span
-                                    className={`block text-sm ${
-                                      isRead
-                                        ? "font-medium text-[#5e4944]"
-                                        : "font-semibold text-[#351716]"
-                                    }`}
+                                    className={`block text-sm ${isRead
+                                      ? "font-medium text-[#5e4944]"
+                                      : "font-semibold text-[#351716]"
+                                      }`}
                                   >
                                     {notification.title ||
                                       "Notification"}
@@ -952,7 +967,11 @@ const AdminLayout = ({ children }) => {
       </header>
 
       {/* PAGE CONTENT */}
-      <div className="min-h-screen pt-16 lg:pl-[272px]">
+      {/* PAGE CONTENT */}
+      <div
+        className={`min-h-screen pt-16 transition-[padding] duration-300 ${sidebarCollapsed ? "lg:pl-0" : "lg:pl-[272px]"
+          }`}
+      >
         {children}
       </div>
     </div>

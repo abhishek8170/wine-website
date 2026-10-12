@@ -69,6 +69,7 @@ const AdminSidebar = ({
   brandName,
   admin,
   open,
+  collapsed,
   onClose,
   onLogout,
 }) => {
@@ -164,7 +165,10 @@ const AdminSidebar = ({
 
   return (
     <>
-      <div className="fixed inset-y-0 left-0 z-[60] hidden lg:flex">
+      <div
+        className={`fixed inset-y-0 left-0 z-[60] hidden transition-transform duration-300 lg:flex ${collapsed ? "-translate-x-full" : "translate-x-0"
+          }`}
+      >
         {sidebar}
       </div>
 

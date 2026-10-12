@@ -24,7 +24,9 @@ import {
 
 import ProductVariants from "../components/ProductVariants";
 
-const API_SERVER_URL = "http://localhost:5000";
+const API_SERVER_URL = (
+  import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api"
+).replace(/\/api\/?$/, "");
 
 /* =========================================================
    INITIAL FORM
@@ -1201,7 +1203,7 @@ const Products = () => {
 
         {modalOpen && (
 
-          <div className="fixed inset-0 z-50 overflow-y-auto bg-[#241311]/70 p-4 backdrop-blur-sm sm:p-6">
+          <div className="fixed inset-0 z-[100] overflow-y-auto bg-[#241311]/70 p-4 backdrop-blur-sm sm:p-6">
 
             <div className="flex min-h-full items-center justify-center">
 
