@@ -231,7 +231,7 @@ function WineGuide() {
 
                 {/* Wine */}
 
-                <div className="absolute left-[35px] top-[105px] h-[58px] w-[78px] rounded-b-[45%] bg-[#6d1420]/75" />
+                <div className="absolute left-[35px] top-[105px] h-[58px] w-[78px] rounded-b-[75%] bg-[#6d1420]/75" />
 
                 {/* Stem */}
 
@@ -262,7 +262,7 @@ function WineGuide() {
               </div>
 
 
-              {/* Editorial quote */}
+              {/* Editorial quote
 
               <div className="absolute bottom-[7%] right-0 z-40 max-w-[180px] rotate-[-5deg] text-right sm:max-w-[220px]">
 
@@ -280,7 +280,7 @@ function WineGuide() {
 
                 <div className="ml-auto mt-4 h-px w-16 bg-[#c9a45c]" />
 
-              </div>
+              </div> */}
 
             </div>
 

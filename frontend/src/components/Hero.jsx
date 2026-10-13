@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import Lenis from "lenis";
 import { Link } from "react-router-dom";
 import { useSiteSettings } from "../context/SiteSettingsContext.jsx";
 import "../styles/Hero.css";
@@ -32,7 +33,7 @@ const FRAME_COUNT = 132;                        // how many frame files you have
 //   FRAME_PREFIX = "ezgif-frame-"   FRAME_DIGITS = 3   FRAME_START = 1   FRAME_EXT = "png"
 const FRAME_PREFIX = "frame_";
 const FRAME_DIGITS = 3;                         // number of digits in the file number
-const FRAME_START = 14;                          // number of the FIRST file (0 or 1)
+const FRAME_START = 14;                         // number of the FIRST file (0 or 1)
 const FRAME_EXT = "webp";                       // "webp", "jpg" or "png"
 
 const frameSrc = (i) =>                         // i = 0 .. FRAME_COUNT-1
@@ -47,7 +48,22 @@ const VIDEO_END = 0.94;
 //   1.00 = fill the whole screen (crops the top and bottom, zoomed in)
 //   0.85 = zoomed out a little, thin dark bands appear left and right
 //   0.70 = zoomed out a lot
-const FRAME_ZOOM = 0.88;
+const FRAME_ZOOM = 0.85;
+
+/* ---------- SMOOTHNESS SETTINGS ---------- */
+
+// 1. Smooth scrolling (the mouse wheel glides instead of jumping).
+//    Needs:  npm install lenis      Set to false to switch it off.
+const SMOOTH_SCROLL = true;
+const SMOOTH_SCROLL_LERP = 0.06;   // lower = longer glide (0.05 very floaty, 0.15 snappy)
+
+// 2. How long (seconds) the picture takes to catch up with the scroll.
+//    Higher = dreamier glide, lower = more direct.
+const SCRUB_SMOOTHING = 0.3;
+
+// 3. Blend neighbouring frames so the 10-frames-per-second video
+//    looks like continuous motion instead of steps.
+const BLEND_FRAMES = true;
 
 // Captions. in/out are scroll progress values (0..1).
 // side: "left" | "right" | "center"
@@ -122,7 +138,7 @@ function Hero() {
 
     const ctx = canvas.getContext("2d");
     ctx.imageSmoothingEnabled = true;
-    ctx.imageSmoothingQuality = "high"; // sharper scaling of the frames
+    ctx.imageSmoothingQuality = "medium"; // "high" looks a bit sharper but is slower
     const images = new Array(FRAME_COUNT).fill(null);
 
     let headerH = 88;
@@ -130,7 +146,8 @@ function Hero() {
     let heroH = 0;
     let target = 0;        // progress the scroll asks for
     let current = 0;       // progress we are actually showing (eased)
-    let drawnIndex = -1;
+    let drawnPos = -1;     // frame position currently on the canvas
+    let lastTime = 0;      // for time-based easing
     let rafId = null;
     let cancelled = false;
 
@@ -143,8 +160,15 @@ function Hero() {
         const img = new Image();
         img.decoding = "async";
         img.onload = () => {
-          images[i] = img;
-          resolve();
+          // Decode the picture NOW, in the background. Without this the
+          // browser decodes it the first time we draw it, which can freeze
+          // the page for a moment while scrolling.
+          const done = () => {
+            images[i] = img;
+            resolve();
+          };
+          if (img.decode) img.decode().then(done, done);
+          else done();
         };
         img.onerror = () => resolve();
         img.src = frameSrc(i);
@@ -174,8 +198,8 @@ function Hero() {
           const i = order[cursor++];
           await loadFrame(i);
           // redraw if the frame we are waiting for just arrived
-          if (!cancelled && Math.abs(i - frameIndexFor(current)) <= 4) {
-            drawnIndex = -1;
+          if (!cancelled && Math.abs(i - framePosFor(current)) <= 4) {
+            drawnPos = -1;
             requestTick();
           }
         }
@@ -185,8 +209,9 @@ function Hero() {
 
     /* ---------- drawing ---------- */
 
-    const frameIndexFor = (p) =>
-      Math.round(clamp(p / VIDEO_END) * (FRAME_COUNT - 1));
+    // Scroll progress -> frame POSITION. It has decimals on purpose:
+    // 41.3 means "30% of the way from frame 41 to frame 42".
+    const framePosFor = (p) => clamp(p / VIDEO_END) * (FRAME_COUNT - 1);
 
     // closest frame that has already loaded
     const nearestLoaded = (idx) => {
@@ -200,10 +225,16 @@ function Hero() {
     // "cover" fit scaled by FRAME_ZOOM, centred. Below 1 the picture
     // gets smaller than the screen, so we paint the page colour first
     // and feather the left/right edges of the picture into it.
-    const drawFrame = (idx) => {
-      const use = nearestLoaded(idx);
-      if (use < 0) return;
-      const img = images[use];
+    const drawFrame = (pos) => {
+      const i0 = Math.floor(pos);
+      const i1 = Math.min(i0 + 1, FRAME_COUNT - 1);
+      const t = pos - i0;                       // 0..1 between the two frames
+
+      const a = nearestLoaded(i0);
+      if (a < 0) return;
+      const b = BLEND_FRAMES && t > 0.01 ? nearestLoaded(i1) : -1;
+
+      const img = images[a];
       const cw = canvas.width;
       const ch = canvas.height;
       const scale = Math.max(cw / img.naturalWidth, ch / img.naturalHeight) * FRAME_ZOOM;
@@ -215,6 +246,13 @@ function Hero() {
       ctx.fillStyle = "#0a0506";
       ctx.fillRect(0, 0, cw, ch);
       ctx.drawImage(img, x, y, w, h);
+
+      // fade the next frame in on top = in-between picture
+      if (b >= 0 && b !== a) {
+        ctx.globalAlpha = t;
+        ctx.drawImage(images[b], x, y, w, h);
+        ctx.globalAlpha = 1;
+      }
 
       if (FRAME_ZOOM < 1) {
         const feather = w * 0.1;
@@ -245,23 +283,26 @@ function Hero() {
           ctx.fillRect(0, y + h - feather, cw, feather);
         }
       }
-      drawnIndex = idx;
+      drawnPos = pos;
     };
 
     const sizeCanvas = () => {
-      const dpr = Math.min(window.devicePixelRatio || 1, window.innerWidth < 769 ? 1.5 : 2);
+      const dpr = Math.min(window.devicePixelRatio || 1, window.innerWidth < 769 ? 1.5 : 1.5);
       canvas.width = Math.round(stage.clientWidth * dpr);
       canvas.height = Math.round(stage.clientHeight * dpr);
-      drawnIndex = -1;
+      drawnPos = -1;
     };
 
     /* ---------- layout + scroll ---------- */
 
     const measure = () => {
       const header = document.querySelector(".site-header");
-      headerH = header ? header.offsetHeight : 88;
-      // shared with HomeStill.css so the page background lines up exactly
-      document.documentElement.style.setProperty("--hero-header-h", `${headerH}px`);
+      // On the homepage the header floats OVER the hero (see Header.css),
+      // so the hero starts at the very top. Elsewhere it sits below it.
+      headerH =
+        header && header.dataset.overlay !== "true" ? header.offsetHeight : 0;
+      // tells the CSS where the sticky stage must start (0 when the header floats over the hero)
+      hero.style.setProperty("--hero-header-h", `${headerH}px`);
       stageH = stage.offsetHeight;
       heroH = hero.offsetHeight;
       sizeCanvas();
@@ -276,8 +317,8 @@ function Hero() {
     /* ---------- apply progress to everything ---------- */
 
     const apply = (p) => {
-      const idx = frameIndexFor(p);
-      if (idx !== drawnIndex) drawFrame(idx);
+      const pos = framePosFor(p);
+      if (Math.abs(pos - drawnPos) > 0.01) drawFrame(pos);
 
       hero.style.setProperty("--p", p.toFixed(4));
 
@@ -305,16 +346,22 @@ function Hero() {
       });
     };
 
-    // ease current -> target each frame: this is the "camera" feel
-    const tick = () => {
+    // Ease "current" toward "target". This uses real elapsed time, so it
+    // feels the same on a 60 Hz and a 144 Hz screen (the old version
+    // moved a fixed amount per frame and felt different on every screen).
+    const tick = (now) => {
+      const dt = lastTime ? Math.min((now - lastTime) / 1000, 0.1) : 1 / 60;
+      lastTime = now;
+
       const diff = target - current;
-      if (Math.abs(diff) < 0.0003) {
+      if (Math.abs(diff) < 0.0001) {
         current = target;
         apply(current);
         rafId = null;
+        lastTime = 0;
         return;
       }
-      current += diff * 0.12;
+      current += diff * (1 - Math.exp(-dt / SCRUB_SMOOTHING));
       apply(current);
       rafId = requestAnimationFrame(tick);
     };
@@ -344,8 +391,24 @@ function Hero() {
     window.addEventListener("resize", onResize);
     window.addEventListener("load", onResize);
 
+    /* ---------- smooth wheel scrolling (Lenis) ----------
+       Only runs while the homepage is open. It makes the mouse wheel
+       glide. Touch screens keep their normal native scrolling. */
+    let lenis = null;
+    let lenisRaf = null;
+    if (SMOOTH_SCROLL) {
+      lenis = new Lenis({ lerp: SMOOTH_SCROLL_LERP, wheelMultiplier: 0.75 });
+      const loop = (time) => {
+        lenis.raf(time);
+        lenisRaf = requestAnimationFrame(loop);
+      };
+      lenisRaf = requestAnimationFrame(loop);
+    }
+
     return () => {
       cancelled = true;
+      if (lenisRaf !== null) cancelAnimationFrame(lenisRaf);
+      if (lenis) lenis.destroy();
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onResize);
       window.removeEventListener("load", onResize);

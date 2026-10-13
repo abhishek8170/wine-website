@@ -54,6 +54,58 @@ function Header({ brandName: brandNameProp }) {
   const notificationRef = useRef(null);
 
   // =========================================
+  // HEADER LOOK
+  // On the homepage the header floats TRANSPARENT over the hero video.
+  // After the visitor scrolls a little it becomes dark glass.
+  // On every other page it is a normal solid header.
+  // =========================================
+
+  const isHome = location.pathname === "/";
+
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => {
+      const next = window.scrollY > 24;
+      setScrolled((previous) =>
+        previous === next ? previous : next
+      );
+    };
+
+    onScroll();
+
+    window.addEventListener("scroll", onScroll, {
+      passive: true,
+    });
+
+    return () =>
+      window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  // Close the mobile menu when the page changes
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [location.pathname]);
+
+  // =========================================
+  // NAVIGATION LINKS (same links as before)
+  // =========================================
+
+  const navLinks = [
+    { label: "Home", href: "/" },
+    { label: "Shop", href: "/shop" },
+    { label: "Collections", href: "/collections" },
+    { label: "Our Story", href: "/our-story" },
+    { label: "Wine Guide", href: "/wine-guide" },
+    { label: "Contact", href: "/contact" },
+  ];
+
+  const isActive = (href) =>
+    href === "/"
+      ? location.pathname === "/"
+      : location.pathname.startsWith(href);
+
+  // =========================================
   // BRAND NAME
   // =========================================
 
@@ -70,7 +122,7 @@ function Header({ brandName: brandNameProp }) {
     ? settings.logo_url.startsWith("http://") ||
       settings.logo_url.startsWith("https://")
       ? settings.logo_url
-      : `${
+      : `http://localhost:5000${
           settings.logo_url.startsWith("/")
             ? settings.logo_url
             : `/${settings.logo_url}`
@@ -142,7 +194,7 @@ function Header({ brandName: brandNameProp }) {
         unreadResponse,
       ] = await Promise.all([
         fetch(
-          "/api/notifications",
+          "http://localhost:5000/api/notifications",
           {
             method: "GET",
             headers: {
@@ -152,7 +204,7 @@ function Header({ brandName: brandNameProp }) {
         ),
 
         fetch(
-          "/api/notifications/unread-count",
+          "http://localhost:5000/api/notifications/unread-count",
           {
             method: "GET",
             headers: {
@@ -231,7 +283,7 @@ useEffect(() => {
     return;
   }
 
-  const socket = io(import.meta.env.VITE_SOCKET_URL, {
+  const socket = io("http://localhost:5000", {
     transports: ["websocket", "polling"],
   });
 
@@ -351,7 +403,7 @@ useEffect(() => {
 
     try {
       const response = await fetch(
-        `/api/notifications/${notification.id}/read`,
+        `http://localhost:5000/api/notifications/${notification.id}/read`,
         {
           method: "PATCH",
           headers: {
@@ -404,7 +456,7 @@ useEffect(() => {
 
     try {
       const response = await fetch(
-        `/api/notifications/${notificationId}`,
+        `http://localhost:5000/api/notifications/${notificationId}`,
         {
           method: "DELETE",
           headers: {
@@ -490,7 +542,7 @@ useEffect(() => {
               try {
                 const response =
                   await fetch(
-                    `/api/notifications/${notificationId}`,
+                    `http://localhost:5000/api/notifications/${notificationId}`,
                     {
                       method: "DELETE",
                       headers: {
@@ -598,13 +650,58 @@ useEffect(() => {
   };
 
   // =========================================
-  // NOTIFICATION ICON
+  // ICONS (SVG, so every icon has the same size and
+  // sits on the same centre line)
   // =========================================
+
+  const Icon = ({ children, className = "" }) => (
+    <svg
+      viewBox="0 0 24 24"
+      className={`h-icon ${className}`}
+      aria-hidden="true"
+    >
+      {children}
+    </svg>
+  );
+
+  const SearchIcon = () => (
+    <Icon>
+      <circle cx="11" cy="11" r="6.5" />
+      <path d="M16 16l4.5 4.5" />
+    </Icon>
+  );
+
+  const UserIcon = () => (
+    <Icon>
+      <circle cx="12" cy="8" r="3.7" />
+      <path d="M4.5 20c.8-4 3.7-6 7.5-6s6.7 2 7.5 6" />
+    </Icon>
+  );
+
+  const HeartIcon = () => (
+    <Icon>
+      <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21.2l7.8-7.7 1-1.1a5.5 5.5 0 0 0 0-7.8z" />
+    </Icon>
+  );
+
+  const BagIcon = () => (
+    <Icon>
+      <path d="M6 8h12l1 12H5L6 8z" />
+      <path d="M9 10V7a3 3 0 0 1 6 0v3" />
+    </Icon>
+  );
+
+  const HomeIcon = () => (
+    <Icon>
+      <path d="M4 11l8-7 8 7v9H4z" />
+      <path d="M10 20v-5h4v5" />
+    </Icon>
+  );
 
   const NotificationIcon = () => (
     <svg
       viewBox="0 0 24 24"
-      className="notification-bell-icon"
+      className="h-icon notification-bell-icon"
       aria-hidden="true"
     >
       <path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9" />
@@ -616,21 +713,26 @@ useEffect(() => {
   // HEADER
   // =========================================
 
+  const headerClass = [
+    "site-header",
+    isHome ? "site-header--overlay" : "",
+    scrolled ? "is-scrolled" : "",
+    menuOpen ? "menu-is-open" : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  const firstName = customer?.first_name || "";
+
   return (
-    <header className="site-header">
-      {/* =====================================
-          MAIN HEADER
-      ===================================== */}
-
+    <header
+      className={headerClass}
+      data-overlay={isHome ? "true" : "false"}
+    >
       <div className="header-container">
-        {/* ===================================
-            LOGO
-        =================================== */}
+        {/* LOGO */}
 
-        <a
-          href="/"
-          className="brand-logo"
-        >
+        <a href="/" className="brand-logo">
           {logoUrl ? (
             <img
               src={logoUrl}
@@ -642,37 +744,26 @@ useEffect(() => {
           )}
         </a>
 
-        {/* ===================================
-            DESKTOP NAVIGATION
-        =================================== */}
+        {/* DESKTOP NAVIGATION */}
 
-        <nav className="desktop-nav">
-          <a href="/">Home</a>
-
-          <a href="/shop">
-            Shop
-          </a>
-
-          <a href="/collections">
-            Collections
-          </a>
-
-          <a href="/our-story">
-            Our Story
-          </a>
-
-          <a href="/wine-guide">
-            Wine Guide
-          </a>
-
-          <a href="/contact">
-            Contact
-          </a>
+        <nav className="desktop-nav" aria-label="Main">
+          {navLinks.map((link) => (
+            <a
+              key={link.href}
+              href={link.href}
+              className={
+                isActive(link.href) ? "active" : ""
+              }
+              aria-current={
+                isActive(link.href) ? "page" : undefined
+              }
+            >
+              {link.label}
+            </a>
+          ))}
         </nav>
 
-        {/* ===================================
-            DESKTOP ACTIONS
-        =================================== */}
+        {/* DESKTOP ACTIONS */}
 
         <div className="header-actions">
           {/* SEARCH */}
@@ -683,50 +774,73 @@ useEffect(() => {
               className="header-icon"
               aria-label="Search wines"
             >
-              ⌕
+              <SearchIcon />
             </a>
           )}
 
-          {/* ACCOUNT */}
+          {/* ACCOUNT: icon only, details appear on hover */}
 
-          {isAuthenticated ? (
-            <div className="account-header">
-              <a
-                href="/account"
-                className="account-user"
-                aria-label="My account"
-              >
-                <span className="account-icon">
-                  ♙
-                </span>
-
-                <span className="account-name">
-                  Hi,{" "}
-                  {customer?.first_name}
-                </span>
-              </a>
-
-              <button
-                type="button"
-                className="logout-button"
-                onClick={handleLogout}
-              >
-                Logout
-              </button>
-            </div>
-          ) : (
+          <div className="account-menu">
             <a
-              href="/login"
-              className="header-icon account-header-icon"
-              aria-label="Login"
+              href={
+                isAuthenticated ? "/account" : "/login"
+              }
+              className="header-icon account-trigger"
+              aria-label={
+                isAuthenticated ? "My account" : "Login"
+              }
+              aria-haspopup="true"
             >
-              ♙
+              <UserIcon />
             </a>
-          )}
 
-          {/* =================================
-              DESKTOP NOTIFICATION
-          ================================= */}
+            <div className="account-dropdown">
+              {isAuthenticated ? (
+                <>
+                  <div className="account-dropdown-head">
+                    <span className="account-dropdown-eyebrow">
+                      Signed in
+                    </span>
+
+                    <span className="account-name">
+                      {firstName
+                        ? `Hi, ${firstName}`
+                        : "Welcome back"}
+                    </span>
+                  </div>
+
+                  <a href="/account">My Account</a>
+                  <a href="/orders">My Orders</a>
+                  <a href="/wishlist">Wishlist</a>
+
+                  <button
+                    type="button"
+                    className="logout-button"
+                    onClick={handleLogout}
+                  >
+                    Logout
+                  </button>
+                </>
+              ) : (
+                <>
+                  <div className="account-dropdown-head">
+                    <span className="account-dropdown-eyebrow">
+                      Welcome
+                    </span>
+
+                    <span className="account-name">
+                      Your wine journey
+                    </span>
+                  </div>
+
+                  <a href="/login">Sign In</a>
+                  <a href="/register">Create Account</a>
+                </>
+              )}
+            </div>
+          </div>
+
+          {/* NOTIFICATIONS */}
 
           {isAuthenticated && (
             <div
@@ -740,52 +854,32 @@ useEffect(() => {
                     ? "notification-active"
                     : ""
                 }`}
-                onClick={
-                  handleNotificationToggle
-                }
+                onClick={handleNotificationToggle}
                 aria-label={`Notifications${
                   unreadCount > 0
                     ? `, ${unreadCount} unread`
                     : ""
                 }`}
-                aria-expanded={
-                  notificationOpen
-                }
+                aria-expanded={notificationOpen}
               >
                 <NotificationIcon />
 
                 {unreadCount > 0 && (
                   <span className="notification-count">
-                    {unreadCount > 99
-                      ? "99+"
-                      : unreadCount}
+                    {unreadCount > 99 ? "99+" : unreadCount}
                   </span>
                 )}
               </button>
 
               {notificationOpen && (
                 <NotificationPanel
-                  notifications={
-                    notifications
-                  }
-                  unreadCount={
-                    unreadCount
-                  }
-                  loading={
-                    notificationLoading
-                  }
-                  onMarkAsRead={
-                    handleMarkAsRead
-                  }
-                  onDelete={
-                    handleDeleteNotification
-                  }
-                  onClearAll={
-                    handleClearAll
-                  }
-                  formatTime={
-                    formatNotificationTime
-                  }
+                  notifications={notifications}
+                  unreadCount={unreadCount}
+                  loading={notificationLoading}
+                  onMarkAsRead={handleMarkAsRead}
+                  onDelete={handleDeleteNotification}
+                  onClearAll={handleClearAll}
+                  formatTime={formatNotificationTime}
                 />
               )}
             </div>
@@ -802,7 +896,7 @@ useEffect(() => {
                 : ""
             }`}
           >
-            <span>♡</span>
+            <HeartIcon />
 
             {wishlistCount > 0 && (
               <span className="wishlist-count">
@@ -817,41 +911,24 @@ useEffect(() => {
             href="/cart"
             className="header-icon cart-header-icon"
             aria-label={`Cart${
-              cartCount > 0
-                ? `, ${cartCount} items`
-                : ""
+              cartCount > 0 ? `, ${cartCount} items` : ""
             }`}
           >
-            <svg
-              viewBox="0 0 24 24"
-              className="cart-icon"
-              aria-hidden="true"
-            >
-              <path d="M4 5h2l1.5 10h10L20 8H7" />
-              <path d="M9 19h.01M17 19h.01" />
-            </svg>
+            <BagIcon />
 
             {cartCount > 0 && (
-              <span className="cart-count">
-                {cartCount}
-              </span>
+              <span className="cart-count">{cartCount}</span>
             )}
           </a>
         </div>
 
-        {/* ===================================
-            MOBILE ACTIONS
-        =================================== */}
+        {/* MOBILE ACTIONS */}
 
         <div className="mobile-header-actions">
           {isAuthenticated && (
             <div
               className="notification-wrapper mobile-notification-wrapper"
-              ref={
-                notificationOpen
-                  ? notificationRef
-                  : null
-              }
+              ref={notificationOpen ? notificationRef : null}
             >
               <button
                 type="button"
@@ -860,52 +937,32 @@ useEffect(() => {
                     ? "notification-active"
                     : ""
                 }`}
-                onClick={
-                  handleNotificationToggle
-                }
+                onClick={handleNotificationToggle}
                 aria-label={`Notifications${
                   unreadCount > 0
                     ? `, ${unreadCount} unread`
                     : ""
                 }`}
-                aria-expanded={
-                  notificationOpen
-                }
+                aria-expanded={notificationOpen}
               >
                 <NotificationIcon />
 
                 {unreadCount > 0 && (
                   <span className="notification-count mobile-notification-count">
-                    {unreadCount > 99
-                      ? "99+"
-                      : unreadCount}
+                    {unreadCount > 99 ? "99+" : unreadCount}
                   </span>
                 )}
               </button>
 
               {notificationOpen && (
                 <NotificationPanel
-                  notifications={
-                    notifications
-                  }
-                  unreadCount={
-                    unreadCount
-                  }
-                  loading={
-                    notificationLoading
-                  }
-                  onMarkAsRead={
-                    handleMarkAsRead
-                  }
-                  onDelete={
-                    handleDeleteNotification
-                  }
-                  onClearAll={
-                    handleClearAll
-                  }
-                  formatTime={
-                    formatNotificationTime
-                  }
+                  notifications={notifications}
+                  unreadCount={unreadCount}
+                  loading={notificationLoading}
+                  onMarkAsRead={handleMarkAsRead}
+                  onDelete={handleDeleteNotification}
+                  onClearAll={handleClearAll}
+                  formatTime={formatNotificationTime}
                   mobile
                 />
               )}
@@ -916,12 +973,8 @@ useEffect(() => {
 
           <button
             type="button"
-            className={`menu-toggle ${
-              menuOpen ? "open" : ""
-            }`}
-            onClick={() =>
-              setMenuOpen(!menuOpen)
-            }
+            className={`menu-toggle ${menuOpen ? "open" : ""}`}
+            onClick={() => setMenuOpen(!menuOpen)}
             aria-label="Toggle navigation menu"
             aria-expanded={menuOpen}
           >
@@ -932,68 +985,27 @@ useEffect(() => {
         </div>
       </div>
 
-      {/* =====================================
-          MOBILE DROPDOWN MENU
-      ===================================== */}
+      {/* MOBILE DROPDOWN MENU */}
 
-      <div
-        className={`mobile-menu ${
-          menuOpen ? "open" : ""
-        }`}
-      >
-        <nav className="mobile-nav">
-          <a
-            href="/"
-            onClick={closeMenu}
-          >
-            Home
-          </a>
-
-          <a
-            href="/shop"
-            onClick={closeMenu}
-          >
-            Shop
-          </a>
-
-          <a
-            href="/collections"
-            onClick={closeMenu}
-          >
-            Collections
-          </a>
-
-          <a
-            href="/our-story"
-            onClick={closeMenu}
-          >
-            Our Story
-          </a>
-
-          <a
-            href="/wine-guide"
-            onClick={closeMenu}
-          >
-            Wine Guide
-          </a>
-
-          <a
-            href="/contact"
-            onClick={closeMenu}
-          >
-            Contact
-          </a>
+      <div className={`mobile-menu ${menuOpen ? "open" : ""}`}>
+        <nav className="mobile-nav" aria-label="Mobile">
+          {navLinks.map((link) => (
+            <a
+              key={link.href}
+              href={link.href}
+              className={isActive(link.href) ? "active" : ""}
+              onClick={closeMenu}
+            >
+              {link.label}
+            </a>
+          ))}
 
           {isAuthenticated ? (
             <>
-              <a
-                href="/account"
-                onClick={closeMenu}
-              >
-                My Account —{" "}
-                {customer?.first_name}
+              <a href="/account" onClick={closeMenu}>
+                My Account{firstName ? ` — ${firstName}` : ""}
               </a>
-              
+
               <button
                 type="button"
                 className="mobile-logout-button"
@@ -1003,82 +1015,57 @@ useEffect(() => {
               </button>
             </>
           ) : (
-            <a
-              href="/login"
-              onClick={closeMenu}
-            >
+            <a href="/login" onClick={closeMenu}>
               Login
             </a>
           )}
         </nav>
       </div>
 
-      {/* =====================================
-          MOBILE BOTTOM NAVIGATION
-      ===================================== */}
+      {/* MOBILE BOTTOM NAVIGATION */}
 
-      <nav className="mobile-bottom-nav">
-        {/* HOME */}
-
+      <nav className="mobile-bottom-nav" aria-label="Quick links">
         <a
           href="/"
           className={`mobile-bottom-item ${
-            location.pathname === "/"
-              ? "active"
-              : ""
+            location.pathname === "/" ? "active" : ""
           }`}
         >
           <span className="bottom-icon">
-            ⌂
+            <HomeIcon />
           </span>
-
           <span>Home</span>
         </a>
 
-        {/* SEARCH */}
-
         {showSearch && (
-          <a
-            href="/shop"
-            className="mobile-bottom-item"
-          >
+          <a href="/shop" className="mobile-bottom-item">
             <span className="bottom-icon">
-              ⌕
+              <SearchIcon />
             </span>
-
             <span>Search</span>
           </a>
         )}
 
-        {/* ACCOUNT */}
-
         <a
-          href={
-            isAuthenticated
-              ? "/account"
-              : "/login"
-          }
+          href={isAuthenticated ? "/account" : "/login"}
           className="mobile-bottom-item"
         >
           <span className="bottom-icon">
-            ♙
+            <UserIcon />
           </span>
-
           <span>
-            {isAuthenticated
-              ? customer?.first_name
+            {isAuthenticated && firstName
+              ? firstName
               : "Account"}
           </span>
         </a>
-
-        {/* WISHLIST */}
 
         <a
           href="/wishlist"
           className="mobile-bottom-item wishlist-mobile-item"
         >
           <span className="bottom-icon wishlist-mobile-icon">
-            ♡
+            <HeartIcon />
 
             {wishlistCount > 0 && (
               <span className="wishlist-count-mobile">
@@ -1086,25 +1073,12 @@ useEffect(() => {
               </span>
             )}
           </span>
-
           <span>Wishlist</span>
         </a>
 
-        {/* CART */}
-
-        <a
-          href="/cart"
-          className="mobile-bottom-item"
-        >
+        <a href="/cart" className="mobile-bottom-item">
           <span className="bottom-icon cart-mobile-icon">
-            <svg
-              viewBox="0 0 24 24"
-              className="cart-icon"
-              aria-hidden="true"
-            >
-              <path d="M4 5h2l1.5 10h10L20 8H7" />
-              <path d="M9 19h.01M17 19h.01" />
-            </svg>
+            <BagIcon />
 
             {cartCount > 0 && (
               <span className="cart-count-mobile">
@@ -1112,7 +1086,6 @@ useEffect(() => {
               </span>
             )}
           </span>
-
           <span>Cart</span>
         </a>
       </nav>

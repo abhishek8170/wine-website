@@ -957,17 +957,17 @@ const AdminLayout = ({ children }) => {
                   `${brandName} Admin`}
               </p>
 
-              <p className="max-w-[220px] truncate text-[10px] text-[#d9cbb9]">
+              {/* <p className="max-w-[220px] truncate text-[10px] text-[#d9cbb9]">
                 {admin?.email ||
                   "Store administrator"}
-              </p>
+              </p> */}
             </div>
           </div>
         </div>
       </header>
 
       {/* PAGE CONTENT */}
-      {/* PAGE CONTENT */}
+     
       <div
         className={`min-h-screen pt-16 transition-[padding] duration-300 ${sidebarCollapsed ? "lg:pl-0" : "lg:pl-[272px]"
           }`}

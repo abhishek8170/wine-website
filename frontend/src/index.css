@@ -1,5 +1,19 @@
 @import "tailwindcss";
 
+/* ==========================================================
+   SITE FONTS  (one place to change fonts for the whole site)
+   - font-serif  : Playfair Display  -> headings, product names, quotes
+   - font-sans   : Inter             -> body text, menus, buttons, labels
+   The fonts themselves are loaded in index.html.
+   Every `font-serif` / `font-sans` class in the project uses these,
+   and CSS files use var(--font-serif) / var(--font-sans).
+   ========================================================== */
+
+@theme static {
+  --font-sans: "Inter", "Helvetica Neue", Arial, sans-serif;
+  --font-serif: "Playfair Display", Georgia, "Times New Roman", serif;
+}
+
 @layer base {
   * {
     margin: 0;
@@ -11,6 +25,12 @@
     width: 100%;
     min-height: 100%;
     scroll-behavior: smooth;
+
+    /* keep the browser's own text size (16px) so visitors who set a
+       bigger text size in their browser get it */
+    font-size: 100%;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
   }
 
   body {
@@ -19,10 +39,35 @@
     margin: 0;
     padding: 0;
 
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: var(--font-sans);
+    font-size: 1rem;      /* 16px */
+    line-height: 1.65;
+    font-weight: 400;
+
+    /* crisper, more legible text */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
 
     background: #241311;
     color: #f3e9d8;
+  }
+
+  /* Playfair numbers: always the tall "lining" style, so prices
+     like ₹890 read clearly */
+  .font-serif {
+    font-variant-numeric: lining-nums;
+  }
+
+  /* nicer line breaks: balanced headings, no one-word last lines */
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
   }
 
   #root {
@@ -39,6 +84,13 @@
     font: inherit;
   }
 
+  /* inputs under 16px make iPhones zoom the page when tapped */
+  input,
+  textarea,
+  select {
+    font-size: max(1rem, 16px);
+  }
+
   button {
     cursor: pointer;
   }
@@ -51,5 +103,11 @@
   img {
     display: block;
     max-width: 100%;
+  }
+
+  /* clear keyboard focus ring (accessibility) */
+  :focus-visible {
+    outline: 2px solid #c9a45c;
+    outline-offset: 2px;
   }
 }
