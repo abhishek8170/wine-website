@@ -12,9 +12,22 @@ import {
   X,
 } from "lucide-react";
 
-   const API_BASE_URL =
-     import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
-     
+/*
+|--------------------------------------------------------------------------
+| API ADDRESS
+|--------------------------------------------------------------------------
+| On Vercel this reads VITE_API_BASE_URL
+| (https://wine-backend-kq68.onrender.com).
+| On your own computer it falls back to http://localhost:5000.
+| API_URL adds "/api" so every call below can stay as it was:
+|   `${API_URL}/admin/reviews`
+*/
+
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+
+const API_URL = `${API_BASE_URL}/api`;
+
 const getToken = () => {
   return (
     sessionStorage.getItem("adminToken") ||
