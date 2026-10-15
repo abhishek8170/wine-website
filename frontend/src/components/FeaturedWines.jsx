@@ -99,7 +99,7 @@ function FeaturedWines() {
     <section className="relative overflow-hidden bg-[#241311] px-5 py-20 sm:px-8 lg:px-12 lg:py-28">
 
       {/* Decorative background element */}
-      <div className="pointer-events-none absolute -right-32 top-20 h-72 w-72 rounded-full bg-[#8b1e2d]/10 blur-3xl" />
+      <div className="pointer-events-none absolute -right-32 top-20 h-72 w-72 rounded-full bg-[radial-gradient(circle,rgba(139,30,45,0.17)_0%,transparent_70%)]" />
 
       <div className="relative mx-auto max-w-7xl">
 
@@ -168,13 +168,13 @@ function FeaturedWines() {
               <Link
                 key={wine.id}
                 to={`/shop/${wine.id}`}
-                className="group relative overflow-hidden border border-[#c9a45c]/15 bg-[#321b18]/60 backdrop-blur-sm transition-all duration-500 hover:-translate-y-1 hover:border-[#c9a45c]/50"
+                className="group relative overflow-hidden border border-[#c9a45c]/15 bg-[#321b18]/60 transition-all duration-500 hover:-translate-y-1 hover:border-[#c9a45c]/50"
               >
                 {/* Image */}
                 {/* Image */}
                 <div className="relative h-[390px] overflow-hidden bg-[#f3e8d7]">
                   <div className="flex h-full w-full items-center justify-center p-8 sm:p-10">
-                    <img
+                    <img loading="lazy" decoding="async"
                       src={getImage(wine)}
                       alt={wine.name || "Featured wine"}
                       className="h-full w-full object-contain transition-transform duration-700 group-hover:scale-[1.03]"
@@ -188,7 +188,7 @@ function FeaturedWines() {
                   <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#241311]/60 via-transparent to-transparent opacity-70" />
 
                   {/* Category */}
-                  <div className="absolute left-4 top-4 border border-[#f3e8d7]/40 bg-[#241311]/60 px-3 py-2 backdrop-blur-md">
+                  <div className="absolute left-4 top-4 border border-[#f3e8d7]/40 bg-[#241311]/60 px-3 py-2">
                     <span className="text-[10px] uppercase tracking-[0.22em] text-[#f3e8d7]">
                       {getCategory(wine)}
                     </span>

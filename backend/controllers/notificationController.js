@@ -1,4 +1,7 @@
 const pool = require("../config/db");
+const {
+  queueNotificationEmail,
+} = require("../utils/customerEmails");
 
 console.log("NOTIFICATION CONTROLLER LOADED");
 
@@ -107,7 +110,13 @@ const createCustomerNotification = async (
     ]
   );
 
-  return result.rows[0];
+  const notification = result.rows[0];
+
+  // Also send this notification by email (runs in the background,
+  // waits until the order is saved, respects the customer's preferences)
+  queueNotificationEmail(notification);
+
+  return notification;
 };
 
 // =====================================================

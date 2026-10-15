@@ -96,7 +96,7 @@ export default function ExploreCollections() {
   return (
     <section className="relative overflow-hidden bg-[#f3e9d8] px-6 py-20 text-[#241311] sm:px-8 lg:px-12 lg:py-28">
       {/* Subtle luxury background detail */}
-      <div className="pointer-events-none absolute right-0 top-0 h-72 w-72 rounded-full bg-[#7b2737]/5 blur-3xl" />
+      <div className="pointer-events-none absolute right-0 top-0 h-72 w-72 rounded-full bg-[radial-gradient(circle,rgba(123,39,55,0.09)_0%,transparent_70%)]" />
 
       <div className="relative mx-auto max-w-7xl">
 
@@ -149,7 +149,7 @@ export default function ExploreCollections() {
                   {/* Image */}
                   <div className="relative aspect-[4/5] overflow-hidden">
 
-                    <img
+                    <img loading="lazy" decoding="async"
                       src={image}
                       alt={collection.name}
                       className="h-full w-full object-cover transition duration-700 group-hover:scale-105"

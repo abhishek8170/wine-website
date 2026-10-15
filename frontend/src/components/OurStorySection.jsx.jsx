@@ -81,9 +81,9 @@ const OurStory = () => {
     <section className="relative overflow-hidden bg-[#241311] py-20 sm:py-24 lg:py-32">
       {/* BACKGROUND DECORATION */}
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute -left-32 top-20 h-72 w-72 rounded-full bg-[#6f1d2b]/20 blur-3xl" />
+        <div className="absolute -left-32 top-20 h-72 w-72 rounded-full bg-[radial-gradient(circle,rgba(111,29,43,0.34)_0%,transparent_70%)]" />
 
-        <div className="absolute -right-32 bottom-10 h-80 w-80 rounded-full bg-[#b89b5e]/10 blur-3xl" />
+        <div className="absolute -right-32 bottom-10 h-80 w-80 rounded-full bg-[radial-gradient(circle,rgba(184,155,94,0.17)_0%,transparent_70%)]" />
       </div>
 
       <div className="relative mx-auto max-w-7xl px-5 sm:px-8 lg:px-12">
@@ -109,11 +109,11 @@ const OurStory = () => {
           {/* IMAGE */}
           <div className="group relative overflow-hidden">
 
-            <div className="absolute -inset-3 rounded-[2rem] border border-[#c5a96b]/10 bg-white/[0.02] backdrop-blur-sm" />
+            <div className="absolute -inset-3 rounded-[2rem] border border-[#c5a96b]/10 bg-white/[0.02]" />
 
             <div className="relative aspect-[4/5] overflow-hidden rounded-[1.5rem] sm:aspect-[5/6]">
 
-              <img
+              <img loading="lazy" decoding="async"
                 src={ourStory.imageUrl}
                 alt={
                   replaceBrandName(
@@ -138,7 +138,7 @@ const OurStory = () => {
 
               {ourStory.imageCaption && (
                 <div className="absolute bottom-5 left-5 right-5 sm:bottom-7 sm:left-7 sm:right-7">
-                  <div className="inline-flex rounded-full border border-white/15 bg-[#241311]/45 px-4 py-2 backdrop-blur-md">
+                  <div className="inline-flex rounded-full border border-white/15 bg-[#241311]/45 px-4 py-2">
                     <span className="text-[10px] uppercase tracking-[0.25em] text-[#f3e9d8]/90">
                       {ourStory.imageCaption}
                     </span>

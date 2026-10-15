@@ -831,11 +831,10 @@ function Shop() {
               onClick={() =>
                 selectCategory("")
               }
-              className={`rounded-full px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.12em] transition ${
-                !categoryFromUrl
+              className={`rounded-full px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.12em] transition ${!categoryFromUrl
                   ? "bg-[#351716] text-[#f3e8d7]"
                   : "text-[#351716]/65 hover:bg-white/50"
-              }`}
+                }`}
             >
               All Wines
             </button>
@@ -852,12 +851,11 @@ function Shop() {
                       wineCategory.slug
                     )
                   }
-                  className={`rounded-full px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.12em] transition ${
-                    categoryFromUrl ===
-                    wineCategory.slug
+                  className={`rounded-full px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.12em] transition ${categoryFromUrl ===
+                      wineCategory.slug
                       ? "bg-[#351716] text-[#f3e8d7]"
                       : "text-[#351716]/65 hover:bg-white/50"
-                  }`}
+                    }`}
                 >
                   {
                     wineCategory.name
@@ -887,12 +885,12 @@ function Shop() {
 
             {activeFilterCount >
               0 && (
-              <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-[#351716] px-1.5 text-[10px] text-[#f3e8d7]">
-                {
-                  activeFilterCount
-                }
-              </span>
-            )}
+                <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-[#351716] px-1.5 text-[10px] text-[#f3e8d7]">
+                  {
+                    activeFilterCount
+                  }
+                </span>
+              )}
 
           </button>
 
@@ -944,7 +942,7 @@ function Shop() {
 
           <aside className="hidden md:block">
 
-            <div className="sticky top-6 max-h-[calc(100vh-3rem)] overflow-y-auto rounded-[28px] border border-[#351716]/10 bg-white/35 p-6 backdrop-blur-md">
+            <div className="sticky top-28 max-h-[calc(100vh-3rem)] overflow-y-auto rounded-[28px] border border-[#351716]/10 bg-white/35 p-6 backdrop-blur-md">
 
               <div className="mb-6 flex items-center justify-between">
 
@@ -962,16 +960,16 @@ function Shop() {
 
                 {activeFilterCount >
                   0 && (
-                  <button
-                    type="button"
-                    onClick={
-                      clearAllFilters
-                    }
-                    className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[#351716]/55 hover:text-[#351716]"
-                  >
-                    Clear all
-                  </button>
-                )}
+                    <button
+                      type="button"
+                      onClick={
+                        clearAllFilters
+                      }
+                      className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[#351716]/55 hover:text-[#351716]"
+                    >
+                      Clear all
+                    </button>
+                  )}
 
               </div>
 
@@ -1007,12 +1005,11 @@ function Shop() {
                 <p className="text-sm text-[#351716]/70">
                   {loading
                     ? "Discovering wines..."
-                    : `${displayedProducts.length} ${
-                        displayedProducts.length ===
-                        1
-                          ? "wine"
-                          : "wines"
-                      }`}
+                    : `${displayedProducts.length} ${displayedProducts.length ===
+                      1
+                      ? "wine"
+                      : "wines"
+                    }`}
                 </p>
 
                 <div className="mt-2 flex flex-wrap items-center gap-2">
@@ -1058,18 +1055,18 @@ function Shop() {
 
                   {activeFilterCount >
                     0 && (
-                    <span className="rounded-full bg-[#351716]/8 px-3 py-1 text-xs">
-                      {
-                        activeFilterCount
-                      }{" "}
-                      filter
-                      {activeFilterCount !==
-                      1
-                        ? "s"
-                        : ""}{" "}
-                      applied
-                    </span>
-                  )}
+                      <span className="rounded-full bg-[#351716]/8 px-3 py-1 text-xs">
+                        {
+                          activeFilterCount
+                        }{" "}
+                        filter
+                        {activeFilterCount !==
+                          1
+                          ? "s"
+                          : ""}{" "}
+                        applied
+                      </span>
+                    )}
 
                 </div>
 
@@ -1168,7 +1165,7 @@ function Shop() {
             {!loading &&
               !error &&
               displayedProducts.length ===
-                0 && (
+              0 && (
                 <div className="rounded-[28px] border border-[#351716]/10 bg-white/30 px-6 py-20 text-center backdrop-blur-md">
 
                   <p className="text-xs font-semibold uppercase tracking-[0.25em] text-[#c9a45c]">
@@ -1203,7 +1200,7 @@ function Shop() {
             {!loading &&
               !error &&
               displayedProducts.length >
-                0 && (
+              0 && (
                 <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
 
                   {displayedProducts.map(
@@ -1231,7 +1228,7 @@ function Shop() {
       ================================================= */}
 
       {filtersOpen && (
-        <div className="fixed inset-0 z-[100] md:hidden">
+        <div className="fixed inset-0 z-[1300] md:hidden">
 
           {/* BACKDROP */}
 
@@ -1246,8 +1243,7 @@ function Shop() {
 
           {/* DRAWER */}
 
-          <div className="absolute bottom-0 left-0 right-0 max-h-[88vh] overflow-y-auto rounded-t-[32px] bg-[#f3e8d7] px-6 pb-8 pt-5 shadow-2xl">
-
+          <div className="absolute bottom-0 left-0 right-0 max-h-[88dvh] overflow-y-auto rounded-t-[32px] bg-[#f3e8d7] px-6 pb-[calc(2rem+env(safe-area-inset-bottom))] pt-5 shadow-2xl">
             <div className="mb-6 flex items-center justify-between">
 
               <div>
@@ -1772,7 +1768,7 @@ function FilterSelect({
             >
               {
                 optionLabels[
-                  option
+                option
                 ] || option
               }
             </option>

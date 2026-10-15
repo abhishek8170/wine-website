@@ -84,9 +84,7 @@
 
 /* after scrolling a little: dark glass */
 .site-header--overlay.is-scrolled {
-  background: rgba(14, 6, 8, 0.84);
-  -webkit-backdrop-filter: blur(14px) saturate(120%);
-  backdrop-filter: blur(14px) saturate(120%);
+  background: rgba(14, 6, 8, 0.95);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.28);
 }
 
@@ -1256,9 +1254,7 @@
     align-items: stretch;
     justify-content: space-around;
 
-    background: rgba(14, 6, 8, 0.94);
-    -webkit-backdrop-filter: blur(14px);
-    backdrop-filter: blur(14px);
+    background: rgba(14, 6, 8, 0.97);
     border-top: 1px solid rgba(201, 164, 92, 0.3);
     padding-bottom: env(safe-area-inset-bottom, 0);
   }
@@ -1377,4 +1373,18 @@
   .menu-toggle span {
     transition: none;
   }
+}
+
+/* ==========================================================
+   While a bottom sheet / pop-up is open (the Shop filter drawer),
+   hide the mobile bottom bar so it can never cover the sheet's buttons.
+   The page adds the class "drawer-open" to <body> while it is open.
+   ========================================================== */
+
+body.drawer-open .mobile-bottom-nav {
+  display: none;
+}
+
+body.drawer-open {
+  overflow: hidden;
 }

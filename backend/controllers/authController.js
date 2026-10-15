@@ -7,6 +7,11 @@ const {
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
+const {
+  sendWelcomeEmail,
+  sendPasswordResetEmail,
+  sendPasswordChangedEmail,
+} = require("../utils/customerEmails");
 
 /* =========================================================
    VALIDATION / NORMALIZATION HELPERS
@@ -337,6 +342,9 @@ const registerCustomer = async (req, res) => {
         notificationError
       );
     }
+
+    // Welcome email (runs in the background, never blocks registration)
+    sendWelcomeEmail(customer);
 
     return res.status(201).json({
       success: true,
@@ -1064,6 +1072,8 @@ const forgotPassword = async (
         `
         SELECT
           id,
+          first_name,
+          last_name,
           email,
           is_active
         FROM customers
@@ -1081,7 +1091,7 @@ const forgotPassword = async (
     const genericResponse = {
       success: true,
       message:
-        "If an account exists with this email, a password reset link has been generated.",
+        "If an account exists with this email, a password reset link has been sent to it.",
     };
 
     if (
@@ -1171,52 +1181,16 @@ const forgotPassword = async (
        DEVELOPMENT RESET URL
     ===================================================== */
 
-    const frontendUrl =
-      process.env.FRONTEND_URL ||
-      "http://localhost:5173";
-
-    const resetUrl =
-      `${frontendUrl}/reset-password?token=${resetToken}`;
-
-    /*
-      Development only.
-
-      Later replace this with an actual email service.
-    */
-
-    console.log(
-      "\n=========================================="
-    );
-
-    console.log(
-      "PASSWORD RESET REQUEST"
-    );
-
-    console.log(
-      "Customer:",
-      customer.email
-    );
-
-    console.log(
-      "Reset URL:"
-    );
-
-    console.log(resetUrl);
-
-    console.log(
-      "==========================================\n"
-    );
-
-    return res.json({
-      ...genericResponse,
-
-      /*
-        Keep this only while developing.
-        Remove before production.
-      */
-      developmentResetUrl:
-        resetUrl,
+    // Send the reset link by email. It runs in the background, so the
+    // answer takes the same time whether or not the account exists.
+    // (The reset link is NEVER returned in the API response.)
+    sendPasswordResetEmail({
+      customer,
+      resetToken,
+      expiresMinutes: 30,
     });
+
+    return res.json(genericResponse);
   } catch (error) {
     console.error(
       "Forgot password error:",
@@ -1499,6 +1473,9 @@ const resetPassword = async (
     ===================================================== */
 
     await client.query("COMMIT");
+
+    // Tell the customer their password changed (background)
+    sendPasswordChangedEmail(customer.id);
 
     return res.json({
       success: true,

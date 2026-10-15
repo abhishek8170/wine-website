@@ -1604,7 +1604,7 @@ const Account = () => {
       ==================================================== */}
 
       {isEditOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[#241311]/75 px-4 py-6 backdrop-blur-md">
+        <div className="fixed inset-0 z-[1300] flex items-center justify-center bg-[#241311]/75 px-4 py-6 backdrop-blur-md">
 
           <div className="relative max-h-[90vh] w-full max-w-2xl overflow-y-auto border border-[#c6a56a]/20 bg-[#f7eee1] shadow-[0_30px_100px_rgba(0,0,0,0.35)]">
 

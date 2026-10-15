@@ -22,6 +22,8 @@ import WineGuide from "./pages/WineGuide";
 import WineGuideArticle from "./pages/WineGuideArticle";
 import Contact from "./pages/Contact";
 import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
+
 
 function App() {
   const brandName = "VINEORA";
@@ -148,6 +150,11 @@ function App() {
           path="/forgot-password"
           element={<ForgotPassword />}
         />
+
+        <Route
+           path="/reset-password"
+           element={<ResetPassword />}
+         />
         
       </Routes>
 

@@ -485,6 +485,7 @@ export function CartProvider({
 
   const [loading, setLoading] =
     useState(false);
+    const [cartInitialized, setCartInitialized] = useState(false);
 
   /* -------------------------------------------------------
      LOAD CART FROM DATABASE
@@ -559,61 +560,69 @@ export function CartProvider({
      RESTORE CART WHEN AUTH STATE IS READY
   ------------------------------------------------------- */
 
-  useEffect(() => {
-    if (authLoading) {
-      return;
-    }
+  
+useEffect(() => {
+  if (authLoading) {
+    return;
+  }
 
-    if (
-      isAuthenticated &&
-      token
-    ) {
-      loadDatabaseCart(token);
+  let cancelled = false;
+
+  const restoreCart = async () => {
+    if (isAuthenticated && token) {
+      try {
+        await loadDatabaseCart(token);
+      } finally {
+        if (!cancelled) {
+          setCartInitialized(true);
+        }
+      }
 
       return;
     }
 
     try {
-      const savedCart =
-        localStorage.getItem(
-          CART_STORAGE_KEY
-        );
+      const savedCart = localStorage.getItem(
+        CART_STORAGE_KEY
+      );
 
       if (!savedCart) {
-        setCartItems([]);
-
+        if (!cancelled) {
+          setCartItems([]);
+        }
         return;
       }
 
-      const parsedCart =
-        JSON.parse(savedCart);
+      const parsedCart = JSON.parse(savedCart);
 
-      if (
-        !Array.isArray(parsedCart)
-      ) {
-        setCartItems([]);
-
-        return;
+      if (!cancelled) {
+        setCartItems(
+          normalizeCartItems(
+            Array.isArray(parsedCart) ? parsedCart : []
+          )
+        );
       }
-
-      setCartItems(
-        normalizeCartItems(
-          parsedCart
-        )
-      );
     } catch (error) {
-      console.error(
-        "Error restoring guest cart:",
-        error
-      );
+      console.error("Error restoring guest cart:", error);
 
-      setCartItems([]);
+      if (!cancelled) {
+        setCartItems([]);
+      }
+    } finally {
+      if (!cancelled) {
+        setCartInitialized(true);
+      }
     }
-  }, [
-    authLoading,
-    isAuthenticated,
-    token,
-  ]);
+  };
+
+  setCartInitialized(false);
+  restoreCart();
+
+  return () => {
+    cancelled = true;
+  };
+}, [authLoading, isAuthenticated, token]);
+
 
   /* -------------------------------------------------------
      SAVE GUEST CART
@@ -1922,7 +1931,7 @@ export function CartProvider({
   const value = {
     cartItems,
 
-    cartCount,
+    cartCount: cartInitialized ? cartCount : 0,
 
     cartTotal,
 

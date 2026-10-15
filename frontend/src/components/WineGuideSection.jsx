@@ -54,9 +54,9 @@ function WineGuide() {
     <section className="relative overflow-hidden bg-[#241311] px-5 py-20 sm:px-8 lg:px-12 lg:py-28">
 
       {/* Decorative background glow */}
-      <div className="pointer-events-none absolute -left-32 top-20 h-72 w-72 rounded-full bg-[#8b1e2d]/10 blur-3xl" />
+      <div className="pointer-events-none absolute -left-32 top-20 h-72 w-72 rounded-full bg-[radial-gradient(circle,rgba(139,30,45,0.17)_0%,transparent_70%)]" />
 
-      <div className="pointer-events-none absolute -right-32 bottom-0 h-80 w-80 rounded-full bg-[#c9a45c]/10 blur-3xl" />
+      <div className="pointer-events-none absolute -right-32 bottom-0 h-80 w-80 rounded-full bg-[radial-gradient(circle,rgba(201,164,92,0.17)_0%,transparent_70%)]" />
 
       <div className="relative mx-auto max-w-7xl">
 
@@ -113,13 +113,13 @@ function WineGuide() {
               <Link
                 key={article.id}
                 to={`/wine-guide/${article.slug}`}
-                className="group relative overflow-hidden border border-[#c9a45c]/15 bg-[#321b18]/50 backdrop-blur-sm transition-all duration-500 hover:-translate-y-1 hover:border-[#c9a45c]/45"
+                className="group relative overflow-hidden border border-[#c9a45c]/15 bg-[#321b18]/50 transition-all duration-500 hover:-translate-y-1 hover:border-[#c9a45c]/45"
               >
 
                 {/* Image */}
                 <div className="relative h-[330px] overflow-hidden bg-[#3a201c]">
 
-                  <img
+                  <img loading="lazy" decoding="async"
                     src={getImage(article)}
                     alt={
                       article.imageAlt ||
@@ -136,7 +136,7 @@ function WineGuide() {
                   <div className="absolute inset-0 bg-gradient-to-t from-[#241311]/80 via-transparent to-transparent" />
 
                   {/* Category */}
-                  <div className="absolute left-5 top-5 border border-[#f3e8d7]/30 bg-[#241311]/65 px-3 py-2 backdrop-blur-md">
+                  <div className="absolute left-5 top-5 border border-[#f3e8d7]/30 bg-[#241311]/85 px-3 py-2">
 
                     <span className="text-[10px] uppercase tracking-[0.2em] text-[#f3e8d7]">
                       {article.category}
@@ -196,7 +196,7 @@ function WineGuide() {
 
         {/* Empty state */}
         {!loading && articles.length === 0 && (
-          <div className="border border-[#c9a45c]/20 bg-[#321b18]/50 px-6 py-12 text-center backdrop-blur-sm">
+          <div className="border border-[#c9a45c]/20 bg-[#321b18]/50 px-6 py-12 text-center">
 
             <p className="font-serif text-2xl text-[#f3e8d7]">
               The VINEORA Journal is coming soon.

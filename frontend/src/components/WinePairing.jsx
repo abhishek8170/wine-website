@@ -47,9 +47,9 @@ const WinePairing = () => {
   return (
     <section className="relative overflow-hidden bg-[#f3e8d7] text-[#351716]">
       {/* Background accents */}
-      <div className="pointer-events-none absolute -left-40 top-20 h-80 w-80 rounded-full bg-[#c5a96b]/10 blur-3xl" />
+      <div className="pointer-events-none absolute -left-40 top-20 h-80 w-80 rounded-full bg-[radial-gradient(circle,rgba(197,169,107,0.17)_0%,transparent_70%)]" />
 
-      <div className="pointer-events-none absolute -right-40 bottom-0 h-96 w-96 rounded-full bg-[#8b1e2d]/10 blur-3xl" />
+      <div className="pointer-events-none absolute -right-40 bottom-0 h-96 w-96 rounded-full bg-[radial-gradient(circle,rgba(139,30,45,0.17)_0%,transparent_70%)]" />
 
       <div className="relative mx-auto max-w-7xl px-5 py-24 sm:px-8 sm:py-28 lg:px-12 lg:py-36">
         {/* =========================================================

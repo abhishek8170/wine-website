@@ -725,6 +725,7 @@ useEffect(() => {
   const firstName = customer?.first_name || "";
 
   return (
+    <>
     <header
       className={headerClass}
       data-overlay={isHome ? "true" : "false"}
@@ -1021,8 +1022,12 @@ useEffect(() => {
           )}
         </nav>
       </div>
+    </header>
 
-      {/* MOBILE BOTTOM NAVIGATION */}
+      {/* MOBILE BOTTOM NAVIGATION
+          Kept OUTSIDE the <header> on purpose: a fixed bar inside a header
+          can jump to the top of the screen if the header ever gets a
+          blur, filter or transform. */}
 
       <nav className="mobile-bottom-nav" aria-label="Quick links">
         <a
@@ -1089,7 +1094,7 @@ useEffect(() => {
           <span>Cart</span>
         </a>
       </nav>
-    </header>
+    </>
   );
 }
 

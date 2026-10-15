@@ -115,7 +115,7 @@ function WineTypes() {
               style={{ "--card-index": index }}
               key={wine.id}
             >
-              <img
+              <img loading="lazy" decoding="async"
                 src={wine.image_url}
                 alt={wine.name}
               />

@@ -49,9 +49,9 @@ function CustomerReviews() {
     <section className="relative overflow-hidden bg-[#f3e8d7] px-5 py-20 sm:px-8 lg:px-12 lg:py-28">
       
       {/* Decorative Elements */}
-      <div className="pointer-events-none absolute -left-32 top-20 h-72 w-72 rounded-full bg-[#8b1e2d]/10 blur-3xl" />
+      <div className="pointer-events-none absolute -left-32 top-20 h-72 w-72 rounded-full bg-[radial-gradient(circle,rgba(139,30,45,0.17)_0%,transparent_70%)]" />
 
-      <div className="pointer-events-none absolute -right-24 bottom-0 h-64 w-64 rounded-full bg-[#c9a45c]/10 blur-3xl" />
+      <div className="pointer-events-none absolute -right-24 bottom-0 h-64 w-64 rounded-full bg-[radial-gradient(circle,rgba(201,164,92,0.17)_0%,transparent_70%)]" />
 
       <div className="relative mx-auto max-w-7xl">
 
@@ -96,7 +96,7 @@ function CustomerReviews() {
             {reviews.slice(0, 6).map((review) => (
               <article
                 key={review.id}
-                className="group relative border border-[#c9a45c]/25 bg-white/30 p-7 backdrop-blur-sm transition-all duration-500 hover:-translate-y-1 hover:border-[#c9a45c]/60"
+                className="group relative border border-[#c9a45c]/25 bg-white/30 p-7 transition-all duration-500 hover:-translate-y-1 hover:border-[#c9a45c]/60"
               >
 
                 {/* Stars */}
@@ -154,7 +154,7 @@ function CustomerReviews() {
 
         {/* Empty State */}
         {!loading && reviews.length === 0 && (
-          <div className="mx-auto mt-14 max-w-2xl border border-[#c9a45c]/30 bg-white/30 px-6 py-12 text-center backdrop-blur-sm">
+          <div className="mx-auto mt-14 max-w-2xl border border-[#c9a45c]/30 bg-white/30 px-6 py-12 text-center">
 
             <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full border border-[#c9a45c]/40">
               <span className="font-serif text-2xl text-[#c9a45c]">

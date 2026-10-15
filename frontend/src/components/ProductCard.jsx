@@ -275,7 +275,7 @@ const imageUrl = getImageUrl(productImage);
               w-full
             "
           >
-            <img
+            <img loading="lazy" decoding="async"
               src={imageUrl}
               alt={product.name}
               onError={(event) => {
