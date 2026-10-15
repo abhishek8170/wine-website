@@ -79,11 +79,13 @@ const isValidPassword = (password) => {
     - uppercase
     - lowercase
     - number
+    - symbol (any character that is not a letter, number or space)
   */
   return (
     /[A-Z]/.test(password) &&
     /[a-z]/.test(password) &&
-    /[0-9]/.test(password)
+    /[0-9]/.test(password) &&
+    /[^A-Za-z0-9\s]/.test(password)
   );
 };
 
@@ -218,7 +220,7 @@ const registerCustomer = async (req, res) => {
       return res.status(400).json({
         success: false,
         message:
-          "Password must be 8-128 characters and contain at least one uppercase letter, one lowercase letter and one number",
+          "Password must be 8-128 characters and contain at least one uppercase letter, one lowercase letter, one number and one symbol",
       });
     }
 
@@ -1260,7 +1262,7 @@ const resetPassword = async (
       return res.status(400).json({
         success: false,
         message:
-          "Password must be 8-128 characters and contain at least one uppercase letter, one lowercase letter and one number",
+          "Password must be 8-128 characters and contain at least one uppercase letter, one lowercase letter, one number and one symbol",
       });
     }
 

@@ -6,13 +6,16 @@ const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL ||
   "http://localhost:5000/api";
 
-/* Same rule as the backend: 8-128 characters,
-   at least one uppercase letter, one lowercase letter and one number */
+/* Same rule as the backend (and the signup page):
+   8-128 characters, one uppercase letter, one lowercase letter,
+   one number and one symbol (any character that is not a letter,
+   a number or a space) */
 const checkPassword = (value) => ({
   length: value.length >= 8 && value.length <= 128,
   upper: /[A-Z]/.test(value),
   lower: /[a-z]/.test(value),
   number: /[0-9]/.test(value),
+  symbol: /[^A-Za-z0-9\s]/.test(value),
 });
 
 function ResetPassword() {
@@ -244,6 +247,10 @@ function ResetPassword() {
                   {ruleItem(rules.upper, "One uppercase letter")}
                   {ruleItem(rules.lower, "One lowercase letter")}
                   {ruleItem(rules.number, "One number")}
+                  {ruleItem(
+                    rules.symbol,
+                    "One symbol (for example ! @ # $ %)"
+                  )}
                 </ul>
 
                 <button
