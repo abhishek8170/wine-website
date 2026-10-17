@@ -16,6 +16,54 @@ const API_URL =
   import.meta.env.VITE_API_BASE_URL ||
   "http://localhost:5000/api";
 
+/* Same password rule as the backend, the customer site and the
+   reset-password page: 8-128 characters, one uppercase letter,
+   one lowercase letter, one number and one symbol. */
+const checkPassword = (value = "") => ({
+  length: value.length >= 8 && value.length <= 128,
+  upper: /[A-Z]/.test(value),
+  lower: /[a-z]/.test(value),
+  number: /[0-9]/.test(value),
+  symbol: /[^A-Za-z0-9\s]/.test(value),
+});
+
+const isStrongPassword = (value) =>
+  Object.values(checkPassword(value)).every(Boolean);
+
+const PASSWORD_RULE_MESSAGE =
+  "Password must be 8-128 characters and contain at least one uppercase letter, one lowercase letter, one number and one symbol.";
+
+const PASSWORD_RULE_LABELS = [
+  ["length", "8 to 128 characters"],
+  ["upper", "One uppercase letter"],
+  ["lower", "One lowercase letter"],
+  ["number", "One number"],
+  ["symbol", "One symbol (for example ! @ # $)"],
+];
+
+const PasswordRules = ({ password }) => {
+  const rules = checkPassword(password);
+
+  return (
+    <ul className="space-y-1.5 rounded-xl border border-[#c9a45c]/20 bg-white/50 px-4 py-3">
+      {PASSWORD_RULE_LABELS.map(([key, label]) => (
+        <li
+          key={key}
+          className={`flex items-center gap-2 text-xs transition ${
+            rules[key] ? "font-semibold text-green-700" : "text-[#6c5850]"
+          }`}
+        >
+          <Check
+            size={14}
+            className={rules[key] ? "opacity-100" : "opacity-30"}
+          />
+          {label}
+        </li>
+      ))}
+    </ul>
+  );
+};
+
 const getToken = () => {
   return (
     sessionStorage.getItem("adminToken") ||
@@ -156,6 +204,11 @@ const AdminManagement = () => {
       return;
     }
 
+    if (!isStrongPassword(form.password)) {
+      showMessage("error", PASSWORD_RULE_MESSAGE);
+      return;
+    }
+
     try {
       setSaving(true);
 
@@ -255,11 +308,8 @@ const AdminManagement = () => {
       return;
     }
 
-    if (form.password.length < 8) {
-      showMessage(
-        "error",
-        "Password must be at least 8 characters."
-      );
+    if (!isStrongPassword(form.password)) {
+      showMessage("error", PASSWORD_RULE_MESSAGE);
       return;
     }
 
@@ -703,8 +753,10 @@ const AdminManagement = () => {
                   type="password"
                   value={form.password}
                   onChange={handleChange}
-                  placeholder="Minimum 8 characters"
+                  placeholder="Create a strong password"
                 />
+
+                <PasswordRules password={form.password} />
 
                 <ModalButtons
                   closeModal={closeModal}
@@ -757,8 +809,10 @@ const AdminManagement = () => {
                   type="password"
                   value={form.password}
                   onChange={handleChange}
-                  placeholder="Minimum 8 characters"
+                  placeholder="Create a strong password"
                 />
+
+                <PasswordRules password={form.password} />
 
                 <ModalButtons
                   closeModal={closeModal}

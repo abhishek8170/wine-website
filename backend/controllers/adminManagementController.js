@@ -5,6 +5,17 @@ const {
   sendAdminPasswordChangedEmail,
 } = require("../utils/adminEmails");
 
+// Same rule as the customer site and the reset-password page:
+// 8-128 characters, one uppercase, one lowercase, one number, one symbol.
+const isValidPassword = (password) =>
+  typeof password === "string" &&
+  password.length >= 8 &&
+  password.length <= 128 &&
+  /[A-Z]/.test(password) &&
+  /[a-z]/.test(password) &&
+  /[0-9]/.test(password) &&
+  /[^A-Za-z0-9\s]/.test(password);
+
 const normalizeEmail = (email) =>
   String(email || "").trim().toLowerCase();
 
@@ -59,10 +70,11 @@ const createAdmin = async (req, res) => {
       });
     }
 
-    if (plainPassword.length < 8) {
+    if (!isValidPassword(plainPassword)) {
       return res.status(400).json({
         success: false,
-        message: "Password must be at least 8 characters",
+        message:
+          "Password must be 8-128 characters and contain at least one uppercase letter, one lowercase letter, one number and one symbol",
       });
     }
 
@@ -243,10 +255,11 @@ const changeAdminPassword = async (req, res) => {
       });
     }
 
-    if (newPassword.length < 8) {
+    if (!isValidPassword(newPassword)) {
       return res.status(400).json({
         success: false,
-        message: "Password must be at least 8 characters",
+        message:
+          "Password must be 8-128 characters and contain at least one uppercase letter, one lowercase letter, one number and one symbol",
       });
     }
 
