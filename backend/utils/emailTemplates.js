@@ -7,7 +7,7 @@
    Every template returns { subject, html, text }.
    ========================================================= */
 
-const { getSiteUrl } = require("./mailService");
+const { getSiteUrl, getAdminSiteUrl } = require("./mailService");
 
 const COLORS = {
   dark: "#241311",
@@ -285,11 +285,107 @@ const notificationEmail = ({
   };
 };
 
+/* =========================================================
+   5. ADMIN EMAILS
+   Same look as the customer emails, but the links open the
+   ADMIN panel (ADMIN_SITE_URL), not the customer website.
+   The welcome email NEVER contains a password.
+========================================================= */
+
+const adminWelcomeEmail = ({ name: adminName, role }) => {
+  const name = adminName || "there";
+  const loginUrl = `${getAdminSiteUrl()}/login`;
+  const forgotUrl = `${getAdminSiteUrl()}/forgot-password`;
+  const roleLabel = role === "super_admin" ? "super admin" : "admin";
+
+  const bodyHtml = `
+    ${heading(`Welcome to the ${BRAND} admin panel`)}
+    ${paragraph(`Hello ${name},`)}
+    ${paragraph(`An ${roleLabel} account has been created for you on the ${BRAND} admin panel. Sign in with this email address and the password given to you by the person who created your account.`)}
+    ${button("Open Admin Panel", loginUrl)}
+    ${small(`Do not have the password, or want to choose your own? Open the sign-in page and use "Forgot password", or go straight to:<br><a href="${escapeHtml(forgotUrl)}" style="color:${COLORS.goldDark};word-break:break-all;">${escapeHtml(forgotUrl)}</a>`)}
+    ${small(`If you were not expecting this, please contact the store owner.`)}
+  `;
+
+  return {
+    subject: `Your ${BRAND} admin account is ready`,
+    html: layout({
+      title: `Welcome to the ${BRAND} admin panel`,
+      preheader: "Your admin account has been created.",
+      bodyHtml,
+    }),
+    text:
+      `Hello ${name},\n\n` +
+      `An ${roleLabel} account has been created for you on the ${BRAND} admin panel.\n` +
+      `Sign in with this email address and the password given to you by the person who created your account.\n\n` +
+      `Admin panel: ${loginUrl}\n` +
+      `Forgot the password? ${forgotUrl}\n\n` +
+      `If you were not expecting this, please contact the store owner.\n`,
+  };
+};
+
+const adminPasswordResetEmail = ({ name: adminName, resetUrl, expiresMinutes = 30 }) => {
+  const name = adminName || "there";
+
+  const bodyHtml = `
+    ${heading("Reset your admin password")}
+    ${paragraph(`Hello ${name},`)}
+    ${paragraph(`We received a request to reset the password for your ${BRAND} admin account. Use the button below to choose a new password.`)}
+    ${button("Reset Password", resetUrl)}
+    ${small(`This link works for ${expiresMinutes} minutes and can only be used once.<br>If the button does not work, copy this address into your browser:<br><a href="${escapeHtml(resetUrl)}" style="color:${COLORS.goldDark};word-break:break-all;">${escapeHtml(resetUrl)}</a>`)}
+    ${small(`If you did not ask for this, you can safely ignore this email. Your password will not change.`)}
+  `;
+
+  return {
+    subject: `Reset your ${BRAND} admin password`,
+    html: layout({
+      title: "Reset your admin password",
+      preheader: `Use this link within ${expiresMinutes} minutes to choose a new password.`,
+      bodyHtml,
+    }),
+    text:
+      `Hello ${name},\n\n` +
+      `We received a request to reset the password for your ${BRAND} admin account.\n` +
+      `Open this link to choose a new password (valid for ${expiresMinutes} minutes, one use):\n\n` +
+      `${resetUrl}\n\n` +
+      `If you did not ask for this, ignore this email. Your password will not change.\n`,
+  };
+};
+
+const adminPasswordChangedEmail = ({ name: adminName }) => {
+  const name = adminName || "there";
+  const loginUrl = `${getAdminSiteUrl()}/login`;
+
+  const bodyHtml = `
+    ${heading("Your admin password was changed")}
+    ${paragraph(`Hello ${name},`)}
+    ${paragraph(`The password for your ${BRAND} admin account was just changed. You can now sign in with your new password.`)}
+    ${button("Sign In", loginUrl)}
+    ${small(`If this was not you, reset your password again straight away and tell the store owner.`)}
+  `;
+
+  return {
+    subject: `Your ${BRAND} admin password was changed`,
+    html: layout({
+      title: "Admin password changed",
+      preheader: "Your admin password was changed successfully.",
+      bodyHtml,
+    }),
+    text:
+      `Hello ${name},\n\nThe password for your ${BRAND} admin account was just changed.\n` +
+      `Sign in: ${loginUrl}\n\n` +
+      `If this was not you, reset your password again straight away and tell the store owner.\n`,
+  };
+};
+
 module.exports = {
   passwordResetEmail,
   passwordChangedEmail,
   welcomeEmail,
   notificationEmail,
+  adminWelcomeEmail,
+  adminPasswordResetEmail,
+  adminPasswordChangedEmail,
   escapeHtml,
   formatMoney,
 };

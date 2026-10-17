@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import {
   Eye,
   EyeOff,
@@ -52,8 +52,12 @@ const Login = () => {
           return;
         }
 
+        const apiBase =
+          import.meta.env.VITE_API_BASE_URL ||
+          "http://localhost:5000/api";
+
         const response = await fetch(
-          "http://localhost:5000/api/admin/settings",
+          `${apiBase}/admin/settings`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -315,6 +319,17 @@ const Login = () => {
                 </button>
 
               </div>
+            </div>
+
+            {/* Forgot password */}
+
+            <div className="-mt-2 text-right">
+              <Link
+                to="/forgot-password"
+                className="text-xs text-[#bdaea4] transition hover:text-[#c9a45c]"
+              >
+                Forgot password?
+              </Link>
             </div>
 
             {/* Error */}

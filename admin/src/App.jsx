@@ -7,6 +7,8 @@ import {
 } from "react-router-dom";
 
 import Login from "./pages/Login";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 import Dashboard from "./pages/Dashboard";
 import Products from "./pages/Products";
 import Inventory from "./pages/Inventory";
@@ -96,6 +98,18 @@ const App = () => {
         <Route
           path="/login"
           element={<Login />}
+        />
+
+
+        {/* FORGOT / RESET PASSWORD (public) */}
+        <Route
+          path="/forgot-password"
+          element={<ForgotPassword />}
+        />
+
+        <Route
+          path="/reset-password"
+          element={<ResetPassword />}
         />
 
 

@@ -11,6 +11,8 @@
      MAIL_FROM_NAME     name shown to customers (default VINEORA)
      CUSTOMER_SITE_URL  address of the customer website, used in links
                         (http://localhost:5173 locally)
+     ADMIN_SITE_URL     address of the ADMIN panel, used in admin emails
+                        (http://localhost:5174 locally)
 
    If BREVO_API_KEY is missing (for example a teammate runs the
    project without keys) the email is printed in the terminal
@@ -38,6 +40,14 @@ const getSiteUrl = () => {
   const raw =
     process.env.CUSTOMER_SITE_URL ||
     "http://localhost:5173";
+
+  return String(raw).trim().replace(/\/+$/, "");
+};
+
+const getAdminSiteUrl = () => {
+  const raw =
+    process.env.ADMIN_SITE_URL ||
+    "http://localhost:5174";
 
   return String(raw).trim().replace(/\/+$/, "");
 };
@@ -155,4 +165,5 @@ module.exports = {
   sendEmail,
   isMailConfigured,
   getSiteUrl,
+  getAdminSiteUrl,
 };

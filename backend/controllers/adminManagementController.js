@@ -1,5 +1,9 @@
 const bcrypt = require("bcryptjs");
 const pool = require("../config/db");
+const {
+  sendAdminWelcomeEmail,
+  sendAdminPasswordChangedEmail,
+} = require("../utils/adminEmails");
 
 const normalizeEmail = (email) =>
   String(email || "").trim().toLowerCase();
@@ -107,6 +111,8 @@ const createAdmin = async (req, res) => {
         passwordHash,
       ]
     );
+
+    sendAdminWelcomeEmail(result.rows[0]);
 
     return res.status(201).json({
       success: true,
@@ -273,6 +279,8 @@ const changeAdminPassword = async (req, res) => {
       `,
       [passwordHash, adminId]
     );
+
+    sendAdminPasswordChangedEmail(adminId);
 
     return res.status(200).json({
       success: true,

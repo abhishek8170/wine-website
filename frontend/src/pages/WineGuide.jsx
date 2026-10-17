@@ -5,11 +5,11 @@ import { useSiteSettings } from "../context/SiteSettingsContext.jsx";
 const API_URL = "/api/wine-guide";
 
 function WineGuide() {
-   const { settings } = useSiteSettings();
+  const { settings } = useSiteSettings();
 
   const brandName =
     settings?.brand_name || "VINEORA";
-    
+
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -183,6 +183,17 @@ function WineGuide() {
 
             <div className="relative mx-auto h-[500px] w-full max-w-[700px] sm:h-[580px] lg:h-[620px]">
 
+
+              {/* Premium studio lighting behind the composition */}
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute left-[12%] top-[12%] h-[420px] w-[420px] rounded-full blur-[90px]"
+                style={{
+                  background:
+                    "radial-gradient(circle, rgba(255,255,255,0.48) 0%, rgba(201,164,92,0.16) 38%, transparent 72%)",
+                }}
+              />
+
               {/* Vineyard / article image */}
 
               <div
@@ -223,43 +234,222 @@ function WineGuide() {
 
               {/* Wine glass */}
 
-              <div className="absolute bottom-[7%] left-[17%] hidden h-[300px] w-[150px] sm:block">
 
-                {/* Glass bowl */}
 
-                <div className="absolute left-[28px] top-0 h-[170px] w-[92px] rounded-b-[50%] rounded-t-[42%] border-[3px] border-white/60 bg-white/10" />
+              <div className="absolute bottom-[7%] left-[17%] z-20 hidden h-[320px] w-[150px] sm:block">
 
-                {/* Wine */}
+                <svg
+                  viewBox="0 0 150 320"
+                  className="h-full w-full overflow-visible"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  aria-label="A crystal wine glass filled with red wine"
+                  role="img"
+                >
+                  <defs>
+                    {/* Crystal glass transparency */}
 
-                <div className="absolute left-[35px] top-[105px] h-[58px] w-[78px] rounded-b-[75%] bg-[#6d1420]/75" />
+                    {/* Crystal glass transparency */}
+                    <linearGradient
+                      id="crystalGlass"
+                      x1="30"
+                      y1="20"
+                      x2="120"
+                      y2="145"
+                      gradientUnits="userSpaceOnUse"
+                    >
+                      <stop offset="0" stopColor="#FFFFFF" stopOpacity="0.58" />
+                      <stop offset="0.08" stopColor="#FFFFFF" stopOpacity="0.20" />
+                      <stop offset="0.22" stopColor="#FFFFFF" stopOpacity="0.035" />
+                      <stop offset="0.50" stopColor="#FFFFFF" stopOpacity="0.01" />
+                      <stop offset="0.76" stopColor="#FFFFFF" stopOpacity="0.045" />
+                      <stop offset="0.92" stopColor="#FFFFFF" stopOpacity="0.24" />
+                      <stop offset="1" stopColor="#FFFFFF" stopOpacity="0.52" />
+                    </linearGradient>
 
-                {/* Stem */}
 
-                <div className="absolute left-[72px] top-[166px] h-[105px] w-px bg-white/60" />
+                    {/* Rich wine colour */}
+                    <linearGradient
+                      id="redWine"
+                      x1="35"
+                      y1="80"
+                      x2="115"
+                      y2="145"
+                      gradientUnits="userSpaceOnUse"
+                    >
+                      <stop offset="0" stopColor="#54101C" />
+                      <stop offset="0.38" stopColor="#852738" />
+                      <stop offset="0.72" stopColor="#681321" />
+                      <stop offset="1" stopColor="#3C0914" />
+                    </linearGradient>
 
-                {/* Base */}
+                    {/* Wine surface */}
+                    <linearGradient id="wineSurface" x1="45" y1="0" x2="105" y2="0">
+                      <stop offset="0" stopColor="#A84B59" stopOpacity="0.8" />
+                      <stop offset="0.5" stopColor="#6D1422" stopOpacity="0.95" />
+                      <stop offset="1" stopColor="#4B0B18" stopOpacity="0.9" />
+                    </linearGradient>
 
-                <div className="absolute left-[42px] top-[270px] h-px w-[62px] bg-white/60" />
+                    {/* Glass silhouette clipping */}
+                    <clipPath id="crystalBowlClip">
+                      <path d="M35 27 C35 8 115 8 115 27 C115 68 103 108 88 134 C82 145 76 150 75 150 C74 150 68 145 62 134 C47 108 35 68 35 27 Z" />
+                    </clipPath>
+                  </defs>
+
+                  {/* Bowl reflections and transparent body */}
+                  <g clipPath="url(#crystalBowlClip)">
+                    <rect
+                      x="25"
+                      y="10"
+                      width="100"
+                      height="145"
+                      fill="url(#crystalGlass)"
+                    />
+
+                    {/* Wine inside the bowl */}
+                    <path
+                      d="M37 87 Q75 92 113 87 C109 110 100 128 88 143 C82 149 77 152 75 152 C73 152 68 149 62 143 C50 128 41 110 37 87 Z"
+                      fill="url(#redWine)"
+                      opacity="0.94"
+                    />
+
+                    {/* Gentle highlight across the wine surface */}
+                    <path
+                      d="M38 87 Q75 91 112 87"
+                      stroke="#DCA0A3"
+                      strokeWidth="1.5"
+                      strokeOpacity="0.7"
+                    />
+
+                    {/* Reflected light on crystal */}
+                    <path
+                      d="M43 35 C44 65 51 99 63 122"
+                      stroke="#FFFFFF"
+                      strokeWidth="2.2"
+                      strokeLinecap="round"
+                      strokeOpacity="0.48"
+                    />
+
+                    <path
+                      d="M108 43 C105 77 96 108 86 126"
+                      stroke="#FFFFFF"
+                      strokeWidth="1.4"
+                      strokeLinecap="round"
+                      strokeOpacity="0.36"
+                    />
+
+                    <path
+                      d="M51 31 C51 47 54 59 57 68"
+                      stroke="#FFFFFF"
+                      strokeWidth="1"
+                      strokeLinecap="round"
+                      strokeOpacity="0.65"
+                    />
+                  </g>
+
+                  {/* Fine crystal bowl outline */}
+                  <path
+                    d="M35 27 C35 8 115 8 115 27 C115 68 103 108 88 134 C82 145 76 150 75 150 C74 150 68 145 62 134 C47 108 35 68 35 27 Z"
+                    stroke="#FFFFFF"
+                    strokeWidth="2.1"
+                    strokeOpacity="0.83"
+                    strokeLinejoin="round"
+                  />
+
+                  {/* Delicate oval rim */}
+                  <ellipse
+                    cx="75"
+                    cy="27"
+                    rx="40"
+                    ry="12"
+                    stroke="#FFFFFF"
+                    strokeWidth="2"
+                    strokeOpacity="0.82"
+                  />
+
+                  <ellipse
+                    cx="75"
+                    cy="27"
+                    rx="36"
+                    ry="8"
+                    stroke="#FFFFFF"
+                    strokeWidth="0.7"
+                    strokeOpacity="0.35"
+                  />
+
+                  {/* Stem */}
+                  <path
+                    d="M75 150 C75 190 75 225 75 270"
+                    stroke="#FFFFFF"
+                    strokeWidth="2"
+                    strokeOpacity="0.65"
+                  />
+
+                  <path
+                    d="M79 160 C79 195 79 230 79 264"
+                    stroke="#FFFFFF"
+                    strokeWidth="0.8"
+                    strokeOpacity="0.25"
+                  />
+
+                  {/* Stem-to-base transition */}
+                  <path
+                    d="M68 272 Q75 267 82 272"
+                    stroke="#FFFFFF"
+                    strokeWidth="1.3"
+                    strokeOpacity="0.65"
+                  />
+
+                  {/* Elliptical crystal base */}
+                  <path
+                    d="M39 280 Q75 272 111 280 Q75 289 39 280 Z"
+                    fill="url(#crystalGlass)"
+                    stroke="#FFFFFF"
+                    strokeWidth="1.5"
+                    strokeOpacity="0.75"
+                  />
+
+                  <path
+                    d="M49 280 Q75 275 101 280"
+                    stroke="#FFFFFF"
+                    strokeWidth="1"
+                    strokeOpacity="0.55"
+                  />
+
+                  {/* Small luxury light reflections */}
+                  <circle cx="43" cy="47" r="1.5" fill="#FFFFFF" fillOpacity="0.8" />
+                  <circle cx="105" cy="59" r="1" fill="#FFFFFF" fillOpacity="0.65" />
+                </svg>
 
               </div>
+
 
 
               {/* =================================================
                   BOTTLE CUTOUT
               ================================================= */}
 
+
               <div className="absolute bottom-[-2%] right-[15%] z-30 h-[700px] w-[230px]">
 
+                {/* Soft ambient shadow behind the bottle */}
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute bottom-[4%] left-[15%] h-[65%] w-[70%] rounded-full bg-[#351016]/35 blur-[38px]"
+                />
+
+                {/* Bottle image with refined lighting */}
                 <img
                   src="/images/wine-guide-bottle.png"
                   alt="VINEORA premium wine bottle"
-                  className="h-full w-full object-contain drop-shadow-[0_35px_35px_rgba(39,11,10,0.45)]"
+                  className="relative z-10 h-full w-full object-contain drop-shadow-[12px_24px_22px_rgba(39,11,10,0.38)]"
                   onError={(event) => {
                     event.currentTarget.src = "/images/wine.png";
                   }}
                 />
 
               </div>
+
 
 
               {/* Editorial quote
