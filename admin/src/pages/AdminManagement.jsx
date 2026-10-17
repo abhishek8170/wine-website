@@ -98,6 +98,7 @@ const AdminManagement = () => {
   const openAddModal = () => {
     resetForm();
     setSelectedAdmin(null);
+    setMessage({ type: "", text: "" });
     setModal("add");
   };
 
@@ -110,6 +111,7 @@ const AdminManagement = () => {
       password: "",
     });
 
+    setMessage({ type: "", text: "" });
     setModal("edit");
   };
 
@@ -122,6 +124,7 @@ const AdminManagement = () => {
       password: "",
     });
 
+    setMessage({ type: "", text: "" });
     setModal("password");
   };
 
@@ -428,7 +431,7 @@ const AdminManagement = () => {
       </div>
 
       {/* Notification */}
-      {message.text && (
+      {message.text && !(modal && message.type === "error") && (
         <div
           className={`mb-5 flex items-center gap-3 rounded-xl border px-4 py-3 text-sm ${
             message.type === "success"
@@ -659,6 +662,17 @@ const AdminManagement = () => {
                 <X size={20} />
               </button>
             </div>
+
+            {/* Error shown inside the popup */}
+            {message.text && message.type === "error" && (
+              <div
+                role="alert"
+                className="mx-6 mt-5 flex items-center gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+              >
+                <AlertCircle size={18} className="shrink-0" />
+                <span>{message.text}</span>
+              </div>
+            )}
 
             {/* Add */}
             {modal === "add" && (
