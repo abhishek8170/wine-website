@@ -1,22 +1,34 @@
-
 .home-still-bg {
+  /* height of the still = the hero stage (viewport minus the header) */
+  --still-h: calc(100vh - var(--hero-header-h, 88px));
+  --still-h: calc(100svh - var(--hero-header-h, 88px));
+
   position: relative;
   z-index: 0;
   background: #050203;
-  /* clip-path stops the fixed layer from showing outside this wrapper */
-  clip-path: inset(0);
+
+  /* PERFORMANCE: this used to be "clip-path: inset(0)" together with a
+     position:fixed layer. That combination makes the browser repaint the
+     whole (very tall) homepage on every scroll frame = lag.
+     "overflow: clip" is a plain, cheap rectangle clip (it does not create
+     a scroll box, so the sticky still below keeps working). */
+  overflow: clip;
 }
 
 /* The still: same box as the hero stage, so the hand-off has no jump */
+/* PERFORMANCE: "sticky" instead of "fixed". It looks the same (the still
+   stays in place while the sections scroll over it) but the browser keeps
+   it on its own GPU layer, so scrolling stays smooth.
+   The negative bottom margin stops it from pushing the sections down. */
 .home-still-bg::before {
   content: "";
-  position: fixed;
-  left: 0;
-  right: 0;
+  display: block;
+  position: sticky;
   top: var(--hero-header-h, 88px);
-  height: calc(100vh - var(--hero-header-h, 88px));
-  height: calc(100svh - var(--hero-header-h, 88px));
+  height: var(--still-h);
+  margin-bottom: calc(-1 * var(--still-h));
   z-index: -1;
+  pointer-events: none;
   background: url("/hero-frames/last.jpg") center / cover no-repeat;
 }
 
@@ -59,9 +71,12 @@
 }
 
 @media (max-width: 768px) {
-  .home-still-bg::before {
-    top: var(--hero-header-h, 78px);
-    height: calc(100svh - var(--hero-header-h, 78px));
+  .home-still-bg {
+    --still-h: calc(100vh - var(--hero-header-h, 78px));
+    --still-h: calc(100svh - var(--hero-header-h, 78px));
   }
 
+  .home-still-bg::before {
+    top: var(--hero-header-h, 78px);
+  }
 }
