@@ -9,7 +9,7 @@ import {
 const SiteSettingsContext = createContext(null);
 
 const DEFAULT_SETTINGS = {
-  brand_name: "VINEORA",
+  brand_name: "",
   logo_url: null,
   favicon_url: null,
   contact_email: "",
